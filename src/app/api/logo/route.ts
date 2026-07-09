@@ -11,7 +11,7 @@ export async function GET() {
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     });
-  } catch (err: any) {
-    return new NextResponse("Error: " + err.message, { status: 500 });
+  } catch (err) {
+    return new NextResponse("Error: " + (err as Error).message, { status: 500 });
   }
 }
