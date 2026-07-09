@@ -19,6 +19,7 @@ const navItems = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
   // Close menu when route changes
@@ -38,8 +39,23 @@ export function Navbar() {
     };
   }, [open]);
 
+  // Handle shrink on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <header className={`navbar ${open ? "navbar-open" : ""}`}>
+    <header className={`navbar ${open ? "navbar-open" : ""} ${scrolled ? "navbar-scrolled" : ""}`}>
       <div className="navbar-inner">
         <Link className="navbar-brand" href="/">
           <div className="navbar-brand-logo-wrapper">

@@ -15,10 +15,11 @@ const PIN_COLORS = [
 
 // Static fallback data to guarantee rendering even if local API is busy or un-configured
 const FALLBACK_DOMAINS: Domain[] = [
-  { slug: "machine-learning", name: "Machine Learning", count: 42 },
-  { slug: "robotics", name: "Robotics", count: 19 },
-  { slug: "campus-research", name: "Campus Research", count: 27 },
-  { slug: "ethics", name: "AI Ethics", count: 12 },
+  { slug: "ai-tech-news", name: "AI Tech News", count: 24 },
+  { slug: "industry", name: "Industry", count: 18 },
+  { slug: "medical-tech", name: "Medical Tech", count: 15 },
+  { slug: "programming", name: "Programming", count: 32 },
+  { slug: "it-news", name: "IT News", count: 21 },
 ];
 
 const FALLBACK_AUTHOR = {

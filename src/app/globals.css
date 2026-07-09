@@ -241,13 +241,39 @@ a {
   border: 0;
 }
 
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px) scale(0.99);
+  filter: blur(2px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
 .navbar {
   position: sticky;
   top: 0;
   z-index: 50;
   border-bottom: 1px solid var(--color-line);
   background: var(--color-paper);
-  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-scrolled {
+  background-color: rgba(241, 237, 228, 0.85) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 .navbar.navbar-open {
@@ -263,6 +289,12 @@ a {
   padding: calc(var(--section-y) / 5) calc(var(--section-y) / 4);
   position: relative;
   z-index: 50;
+  transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-scrolled .navbar-inner {
+  padding-top: calc(var(--section-y) / 8);
+  padding-bottom: calc(var(--section-y) / 8);
 }
 
 .navbar-brand,
@@ -281,6 +313,11 @@ a {
   height: 34px;
   width: auto;
   object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-scrolled .navbar-brand-logo {
+  transform: scale(0.85);
 }
 
 .navbar-brand-text {
@@ -300,6 +337,18 @@ a {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
+  max-height: 20px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              margin 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-scrolled .navbar-brand-text small {
+  max-height: 0px;
+  opacity: 0;
+  margin-top: 0px;
 }
 
 .navbar-actions {
