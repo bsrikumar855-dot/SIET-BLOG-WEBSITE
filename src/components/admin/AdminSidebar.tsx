@@ -68,7 +68,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         />
       )}
 
-      <aside className={`w-64 border-r border-line bg-paper-2 flex flex-col justify-between h-screen sticky top-0 font-util text-xs uppercase tracking-wider
+      <aside className={`w-64 border-r border-line bg-paper-2 flex flex-col justify-between h-screen lg:sticky lg:top-0 font-util text-xs uppercase tracking-wider
         fixed inset-y-0 left-0 z-40 lg:z-auto lg:static transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { TransparentLogo } from "./TransparentLogo";
 
 const navItems = [
   ["Home", "/"],
@@ -41,8 +42,19 @@ export function Navbar() {
     <header className={`navbar ${open ? "navbar-open" : ""}`}>
       <div className="navbar-inner">
         <Link className="navbar-brand" href="/">
-          <span>SIET News</span>
-          <small>AI Research Lab · SIET</small>
+          <div className="navbar-brand-logo-wrapper">
+            <TransparentLogo
+              src="/api/logo"
+              alt="SIET Logo"
+              width={34}
+              height={34}
+              className="navbar-brand-logo"
+            />
+            <div className="navbar-brand-text">
+              <span>SIET News</span>
+              <small>AI Research Lab · SIET</small>
+            </div>
+          </div>
         </Link>
 
         <div className="navbar-actions">

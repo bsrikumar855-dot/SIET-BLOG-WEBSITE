@@ -12,3 +12,5 @@ export { SearchBar } from "./SearchBar";
 export { SectionRail } from "./SectionRail";
 export { TagChip } from "./TagChip";
 export { ScrollReveal } from "./ScrollReveal";
+export { TransparentLogo } from "./TransparentLogo";
+
