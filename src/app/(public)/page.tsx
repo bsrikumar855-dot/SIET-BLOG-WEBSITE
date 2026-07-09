@@ -2,6 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { FeatureMosaic } from "@/components/signature/FeatureMosaic";
+import { F1IntroHero } from "@/components/signature/F1IntroHero";
 import { ContentCard, SectionRail } from "@/components/shared";
 import type { Achievement, Article, Domain, NewsItem } from "@/lib/types";
 
@@ -241,9 +242,11 @@ export default async function HomePage() {
   const events = homeData.events || FALLBACK_EVENTS;
 
   return (
-    <main className="kitchen-page">
-      {/* 1. Masthead */}
-      <header className="flex flex-col gap-3 pt-6 reveal">
+    <>
+      <F1IntroHero />
+      <main className="kitchen-page">
+        {/* 1. Masthead */}
+        <header className="flex flex-col gap-3 pt-6 reveal">
         <h1 className="font-display text-masthead font-semibold leading-[0.9] text-ink tracking-tight">
           SIET News
         </h1>
@@ -319,5 +322,6 @@ export default async function HomePage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

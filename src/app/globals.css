@@ -1323,3 +1323,343 @@ a {
     transition-delay: 0s !important;
   }
 }
+/* ── About Page Team Cards ── */
+.about-team-card {
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-line);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-team-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 24px rgba(15, 43, 92, 0.08);
+}
+
+.about-team-top {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.about-team-avatar-wrap {
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-line);
+}
+
+.about-team-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-team-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.about-team-tag {
+  display: inline-block;
+  font-family: var(--font-util);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  padding: 0.15em 0.6em;
+  border: 1px solid var(--color-accent);
+  width: fit-content;
+}
+
+.about-team-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.about-team-role {
+  font-family: var(--font-util);
+  font-size: 0.78rem;
+  color: var(--color-ink-soft);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.about-team-bio {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  line-height: 1.65;
+  margin: 0;
+  border-left: 2px solid var(--color-line);
+  padding-left: 1rem;
+}
+
+.about-team-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.about-team-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-util);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  text-decoration: none;
+  border: 1px solid var(--color-line);
+  padding: 0.45em 0.9em;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.about-team-link:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border-color: var(--color-ink);
+}
+
+.about-team-link-linkedin:hover {
+  background: #0077B5;
+  border-color: #0077B5;
+  color: #fff;
+}
+
+/* ESPN-Style F1 Intro Hero — sticky scroll pattern */
+
+/* Outer container: tall so the sticky phase has room to animate */
+.f1-hero-outer {
+  height: 250vh;   /* 100vh visible + 150vh scroll distance */
+  position: relative;
+  z-index: 40;
+}
+
+/* Sticky inner: locks to viewport during the scroll range */
+.f1-hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.f1-hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at 50% 40%, #F8F5EF 0%, #F1EDE4 55%, #E8E2D6 100%);
+  z-index: 1;
+}
+
+.f1-hero-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 60vh;
+  background: radial-gradient(ellipse at center, rgba(15, 43, 92, 0.08) 0%, rgba(15, 43, 92, 0) 70%);
+  z-index: 2;
+  pointer-events: none;
+  animation: f1-glow-pulse 4s ease-in-out infinite alternate;
+}
+
+/* Tagline beneath the split wordmark */
+.f1-hero-tagline {
+  position: absolute;
+  top: calc(50% + clamp(4rem, 11vw, 9rem));
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(23, 21, 17, 0.4);
+  z-index: 3;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes f1-glow-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 1.2;
+  }
+}
+
+.f1-hero-split-wordmark {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.08em;
+  z-index: 3;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.f1-split-part {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  transition: transform 0.05s linear;
+}
+
+.f1-split-left {
+  /* slides left on scroll */
+}
+
+.f1-split-right {
+  /* slides right on scroll */
+}
+
+.f1-wordmark-outline {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 18vw, 14rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(23, 21, 17, 0.65);
+  display: block;
+  white-space: nowrap;
+}
+
+.f1-wordmark-solid {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 18vw, 14rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(23, 21, 17, 0.88);
+  display: block;
+  white-space: nowrap;
+}
+
+/* Split wordmark glow accent line between words */
+.f1-split-divider {
+  width: 2px;
+  height: clamp(4rem, 12vw, 10rem);
+  background: linear-gradient(to bottom, transparent, rgba(200, 50, 50, 0.8), transparent);
+  margin: 0 0.15em;
+  flex-shrink: 0;
+}
+
+.f1-hero-footer {
+  position: absolute;
+  bottom: 40px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.f1-scroll-line-container {
+  width: 1px;
+  height: 60px;
+  background-color: rgba(23, 21, 17, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.f1-scroll-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-color: #0F2B5C;
+  animation: f1-scroll-anim 2s ease-in-out infinite;
+}
+
+@keyframes f1-scroll-anim {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+/* Translucent Hero Navbar */
+.navbar-hero-mode {
+  position: absolute !important;
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.navbar-hero-mode .navbar-brand-text span {
+  color: #171511 !important;
+}
+
+.navbar-hero-mode .navbar-brand-text small {
+  color: rgba(23, 21, 17, 0.5) !important;
+}
+
+.navbar-hero-mode .navbar-search-btn {
+  display: none;
+}
+
+.navbar-hero-mode .menu-toggle-btn {
+  border-color: rgba(23, 21, 17, 0.2) !important;
+}
+
+.navbar-hero-mode .hamburger-line {
+  background-color: #171511 !important;
+}
+
+.navbar-hero-mode .navbar-brand-logo {
+  /* No filter to keep original logo colors */
+}
+
+/* In hero mode: brand stays far left, actions float right but minimal */
+.navbar-hero-mode .navbar-inner {
+  justify-content: flex-end;
+}
+
+/* Hide the logo + brand text in hero mode */
+.navbar-hero-mode .navbar-brand {
+  display: none;
+}
+
+.navbar-hero-mode .navbar-search-btn {
+  display: none;
+}
+

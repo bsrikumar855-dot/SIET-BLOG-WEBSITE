@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { TransparentLogo } from "./TransparentLogo";
@@ -19,6 +18,7 @@ const navItems = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isHeroActive, setIsHeroActive] = useState(false);
   const pathname = usePathname();
 
   // Close menu when route changes
@@ -53,8 +53,32 @@ export function Navbar() {
     };
   }, []);
 
+  // Track F1 Hero active threshold (homepage only)
+  useEffect(() => {
+    if (pathname !== "/") {
+      setIsHeroActive(false);
+      return;
+    }
+
+    const checkHeroThreshold = () => {
+      const vh = window.innerHeight;
+      setIsHeroActive(window.scrollY < vh - 80);
+    };
+
+    // Run initial check
+    checkHeroThreshold();
+
+    window.addEventListener("scroll", checkHeroThreshold, { passive: true });
+    window.addEventListener("resize", checkHeroThreshold);
+
+    return () => {
+      window.removeEventListener("scroll", checkHeroThreshold);
+      window.removeEventListener("resize", checkHeroThreshold);
+    };
+  }, [pathname]);
+
   return (
-    <header className={`navbar ${open ? "navbar-open" : ""} ${scrolled ? "navbar-scrolled" : ""}`}>
+    <header className={`navbar ${open ? "navbar-open" : ""} ${scrolled ? "navbar-scrolled" : ""} ${isHeroActive ? "navbar-hero-mode" : ""}`}>
       <div className="navbar-inner">
         <Link className="navbar-brand" href="/">
           <div className="navbar-brand-logo-wrapper">
@@ -73,14 +97,6 @@ export function Navbar() {
         </Link>
 
         <div className="navbar-actions">
-          <Link
-            href="/search"
-            className="navbar-search-btn"
-            aria-label="Search the archive"
-          >
-            <Search size={18} strokeWidth={1.8} />
-          </Link>
-
           <button
             aria-expanded={open}
             aria-label="Toggle menu"
