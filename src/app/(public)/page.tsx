@@ -251,17 +251,17 @@ export default async function HomePage() {
           AI Research Lab · Sri Shakthi Institute of Engineering and Technology
         </p>
         <p className="font-body text-lede text-ink max-w-xl mt-2 leading-relaxed">
-          AI news, student writing, and the record of what we build.
+          AI news, student writing, research papers, and active achievements of our department.
         </p>
       </header>
 
       {/* 2. FeatureMosaic hero */}
       <FeatureMosaic featured={featured} tiles={tiles} />
 
-      {/* 3. News SectionRail */}
+      {/* 3. Section 1: Tech & Lab News */}
       <SectionRail
-        eyebrow="News Bulletin"
-        title="Latest from the Lab"
+        eyebrow="Section 01 / Tech & Lab News"
+        title="Latest News Updates"
         count={newsCount}
         countLabel="News"
         exploreHref="/news"
@@ -272,90 +272,26 @@ export default async function HomePage() {
         ))}
       </SectionRail>
 
-      {/* 4. Intro paragraph + Learn more */}
-      <section className="py-6 border-t border-line flex flex-col md:flex-row gap-8 items-start reveal">
-        <div className="md:w-1/3">
-          <p className="eyebrow">Overview</p>
-          <h2 className="font-display text-h2 font-medium leading-tight mt-2 text-ink">
-            Department Record
-          </h2>
-        </div>
-        <div className="md:w-2/3 space-y-4">
-          <p className="font-body text-lede leading-relaxed text-ink">
-            Between 2024 and 2026, the Sri Shakthi Institute of Engineering and Technology (SIET) AI Research Lab has served as an incubator for student research, modern open-source experimentation, and multidisciplinary engineering. This archive catalogs our progress, student publications, and active news from campus.
-          </p>
-          <Link className="explore-link text-eyebrow font-util uppercase tracking-wider block mt-4" href="/about">
-            Learn more about the lab <span>→</span>
-          </Link>
-        </div>
-      </section>
-
-      {/* 5. Articles SectionRail */}
+      {/* 4. Section 2: Student & Teacher Blogs & Papers */}
       <SectionRail
-        eyebrow="Student Writing"
-        title="Articles & Notes"
+        eyebrow="Section 02 / Academic Writing"
+        title="Student & Teacher Blogs & Papers"
         count={articlesCount}
         countLabel="Articles"
         exploreHref="/articles"
-        exploreLabel="Explore all articles"
+        exploreLabel="Explore all writing"
       >
         {articles.map((item: Article) => (
           <ContentCard key={item.id} variant="article" item={item} />
         ))}
       </SectionRail>
 
-      {/* 6. Domains grid */}
+      {/* 5. Section 3: Student Achievements & Hackathons */}
       <section className="py-6 border-t border-line space-y-8 reveal">
         <div className="flex justify-between items-end">
           <div>
-            <p className="eyebrow">Topics</p>
-            <h2 className="font-display text-h2 font-medium">Domains</h2>
-          </div>
-          <Link className="explore-link" href="/domains">
-            See more domains <span>→</span>
-          </Link>
-        </div>
-        
-        <div className="topics-flex-container">
-          {domains.map((domain: Domain, index) => {
-            const pinColor = PIN_COLORS[index % PIN_COLORS.length];
-            return (
-              <Link
-                key={domain.slug}
-                href={`/domains/${domain.slug}`}
-                className="topic-circle-card group"
-              >
-                {/* Dashed outer spinner */}
-                <div className="topic-circle-outer-ring" />
-                
-                <div className="topic-circle-inner">
-                  {/* Colored Pin */}
-                  <div className="topic-circle-pin-wrapper">
-                    <span className="topic-circle-pin-shaft" style={{ backgroundColor: pinColor }} />
-                    <span className="topic-circle-pin-head" style={{ backgroundColor: pinColor }} />
-                  </div>
-
-                  {/* Text Details */}
-                  <h3 className="topic-circle-title">
-                    {domain.name}
-                  </h3>
-                  
-                  <div className="topic-circle-count">
-                    <span>{domain.count} posts</span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 7. Achievements showcase */}
-      <section className="py-6 border-t border-line space-y-8 reveal">
-        <div className="flex justify-between items-end">
-          <div>
-            <p className="eyebrow">Magazine</p>
-            <h2 className="font-display text-h2 font-medium">Achievements</h2>
+            <p className="eyebrow">Section 03 / Honors & Awards</p>
+            <h2 className="font-display text-h2 font-medium">Student Achievements & Hackathons</h2>
           </div>
           <Link className="explore-link" href="/magazine">
             Explore all achievements <span>→</span>
@@ -380,32 +316,6 @@ export default async function HomePage() {
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* 8. News & Events */}
-      <section className="py-6 border-t border-line flex flex-col lg:flex-row gap-8 reveal">
-        <div className="lg:w-1/3">
-          <p className="eyebrow">Calendar</p>
-          <h2 className="font-display text-h2 font-medium leading-tight mt-2 text-ink">
-            News & Events
-          </h2>
-        </div>
-        <div className="lg:w-2/3 divide-y divide-line">
-          {events.map((event: { id: string; publishedAt: string; title: string; href: string }) => (
-            <div key={event.id} className="py-4 first:pt-0 last:pb-0 flex items-start gap-6 group">
-              <span className="font-util text-eyebrow text-accent shrink-0 pt-1 w-24">
-                {new Date(event.publishedAt).toLocaleDateString("en", {
-                  month: "short",
-                  day: "2-digit",
-                  year: "numeric",
-                })}
-              </span>
-              <h3 className="font-display text-h3 font-medium text-ink group-hover:text-accent transition-colors leading-tight">
-                <Link href={event.href}>{event.title}</Link>
-              </h3>
-            </div>
-          ))}
         </div>
       </section>
     </main>

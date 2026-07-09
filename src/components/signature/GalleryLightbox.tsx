@@ -80,12 +80,10 @@ export function GalleryLightbox({ images }: GalleryLightboxProps) {
       {/* Grid of gallery images */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {images.map((imgUrl, idx) => {
-          const btnRef = useRef<HTMLButtonElement>(null);
           return (
             <button
               key={idx}
-              ref={btnRef}
-              onClick={() => openLightbox(imgUrl, btnRef.current!)}
+              onClick={(e) => openLightbox(imgUrl, e.currentTarget)}
               className="relative aspect-4/3 w-full overflow-hidden border border-line bg-paper-2 hover:border-accent transition-colors group cursor-zoom-in"
               aria-label={`Enlarge gallery image ${idx + 1}`}
             >

@@ -11,7 +11,6 @@ const navItems = [
   ["News", "/news"],
   ["Articles", "/articles"],
   ["Magazine", "/magazine"],
-  ["Domains", "/domains"],
   ["Search", "/search"],
   ["About", "/about"],
   ["Contact", "/contact"],
