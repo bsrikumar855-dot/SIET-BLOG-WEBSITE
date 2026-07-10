@@ -37,6 +37,8 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
     projectLinks: [
       { label: "GitHub Repository", url: "https://github.com/siet-ai/sih-2026" },
     ],
+    likes: 12,
+    bookmarked: false,
   },
 ];
 
@@ -179,6 +181,8 @@ export default function AdminMagazineCRUDPage() {
       gallery: galleryArray,
       certificateUrl: certificateUrl || undefined,
       projectLinks: parsedLinks,
+      likes: editItem?.likes || 0,
+      bookmarked: editItem?.bookmarked || false,
     };
 
     try {

@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { F1IntroHero } from "@/components/signature/F1IntroHero";
-import { ObamaCardStack } from "@/components/signature/ObamaSlideAnimations";
+import { FeatureMosaic } from "@/components/signature/FeatureMosaic";
 import { ContentCard, SectionRail } from "@/components/shared";
 import type { Achievement, Article, Domain, NewsItem } from "@/lib/types";
 
@@ -132,6 +132,8 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
       "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=900&q=80",
     ],
     projectLinks: [{ label: "Project page", url: "https://example.com" }],
+    likes: 18,
+    bookmarked: false,
   },
   {
     id: "ach2",
@@ -153,6 +155,8 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
       "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=80",
     ],
     projectLinks: [{ label: "Paper URL", url: "https://example.com" }],
+    likes: 24,
+    bookmarked: false,
   },
 ];
 
@@ -241,35 +245,12 @@ export default async function HomePage() {
   const achievements = homeData.achievements || FALLBACK_ACHIEVEMENTS;
   const events = homeData.events || FALLBACK_EVENTS;
 
-  // Map featured and tiles to the slides array for the card stack
-  const slides = [
-    {
-      id: featured.id || "f1",
-      number: "01",
-      category: featured.role || "Featured Lead",
-      title: featured.title,
-      description: `Presented by ${featured.name || "AI Research Lab"}. Deep dive into the narrative and milestones.`,
-      image: featured.image || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
-      link: featured.href || "/about",
-    },
-    ...tiles.map((tile: any, idx: number) => ({
-      id: tile.id || `mt-${idx}`,
-      number: String(idx + 2).padStart(2, "0"),
-      category: tile.role || "Research Project",
-      title: tile.title,
-      description: `Led by ${tile.name || "Student Researcher"}. Explore active updates and commits in this domain.`,
-      image: tile.image || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80",
-      link: tile.href || "/news",
-    })),
-  ];
-
   return (
     <>
       <F1IntroHero />
-      <ObamaCardStack slides={slides} />
       <main className="kitchen-page">
         {/* 1. Masthead */}
-        <header className="flex flex-col gap-3 pt-12 reveal">
+        <header className="flex flex-col gap-3 pt-6 reveal">
         <h1 className="font-display text-masthead font-semibold leading-[0.9] text-ink tracking-tight">
           SIET News
         </h1>
@@ -280,6 +261,9 @@ export default async function HomePage() {
           AI news, student writing, research papers, and active achievements of our department.
         </p>
       </header>
+
+      {/* 2. FeatureMosaic hero */}
+      <FeatureMosaic featured={featured} tiles={tiles} />
 
       {/* 3. Section 1: Tech & Lab News */}
       <SectionRail

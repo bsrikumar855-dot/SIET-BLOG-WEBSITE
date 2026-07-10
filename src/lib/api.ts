@@ -2,6 +2,8 @@ import type { Achievement, Article, Domain, NewsItem, Paginated, User } from "./
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE!;
 
+let currentUserPromise: Promise<User | null> | null = null;
+
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {};
   if (!(init?.body instanceof FormData)) {
@@ -14,6 +16,13 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
       ...init,
     });
     if (!res.ok) {
+      if (res.status === 401) {
+        currentUserPromise = null;
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("siet_logged_in");
+          localStorage.removeItem("siet_user_role");
+        }
+      }
       const err = new Error(`${res.status} ${path}`);
       err.stack = err.message;
       throw err;
@@ -33,10 +42,51 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  login: (b: { email: string; password: string }) =>
-    req("/login", { method: "POST", body: JSON.stringify(b) }),
-  logout: () => req("/logout", { method: "POST" }),
+  login: async (b: { email: string; password: string }) => {
+    currentUserPromise = null;
+    const u = await req<User>("/login", { method: "POST", body: JSON.stringify(b) });
+    currentUserPromise = Promise.resolve(u);
+    return u;
+  },
+  logout: async () => {
+    currentUserPromise = null;
+    const res = await req<unknown>("/logout", { method: "POST" });
+    currentUserPromise = Promise.resolve(null);
+    return res;
+  },
   me: () => req<User>("/me"),
+  getCurrentUser: (forceRefresh = false): Promise<User | null> => {
+    if (forceRefresh || !currentUserPromise) {
+      currentUserPromise = req<User>("/me").catch(() => null);
+    }
+    return currentUserPromise;
+  },
+  clearUserCache: () => {
+    currentUserPromise = null;
+  },
+  register: async (b: { name: string; email: string; password: string }) => {
+    currentUserPromise = null;
+    return req<User>("/register", { method: "POST", body: JSON.stringify(b) });
+  },
+
+  likeStatus: (type: "news" | "articles" | "magazine", slug: string) =>
+    req<{ liked: boolean; count: number }>(`/${type}/${slug}/like/status`),
+  like: (type: "news" | "articles" | "magazine", slug: string) =>
+    req<any>(`/${type}/${slug}/like`, { method: "POST" }),
+  unlike: (type: "news" | "articles" | "magazine", slug: string) =>
+    req<any>(`/${type}/${slug}/like`, { method: "DELETE" }),
+
+  bookmarkStatus: (type: "news" | "articles" | "magazine", slug: string) =>
+    req<{ bookmarked: boolean }>(`/${type}/${slug}/bookmark/status`),
+  bookmark: (type: "news" | "articles" | "magazine", slug: string) =>
+    req<any>(`/${type}/${slug}/bookmark`, { method: "POST" }),
+  unbookmark: (type: "news" | "articles" | "magazine", slug: string) =>
+    req<any>(`/${type}/${slug}/bookmark`, { method: "DELETE" }),
+
+  myLikes: () =>
+    req<{ news: NewsItem[]; articles: Article[]; magazine: Achievement[] }>("/me/likes"),
+  myBookmarks: () =>
+    req<{ news: NewsItem[]; articles: Article[]; magazine: Achievement[] }>("/me/bookmarks"),
 
   home: () => req("/home"),
 

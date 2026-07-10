@@ -72,8 +72,20 @@ export function ContentCard(props: ContentCardProps) {
       <footer className="content-card-footer">
         <span>{footer}</span>
         <div>
-          {"likes" in item ? <LikeButton count={item.likes} /> : null}
-          {"bookmarked" in item ? <BookmarkButton bookmarked={item.bookmarked} /> : null}
+          {"likes" in item ? (
+            <LikeButton
+              type={variant === "news" ? "news" : variant === "article" ? "articles" : "magazine"}
+              slug={item.slug}
+              count={item.likes}
+            />
+          ) : null}
+          {"bookmarked" in item ? (
+            <BookmarkButton
+              type={variant === "news" ? "news" : variant === "article" ? "articles" : "magazine"}
+              slug={item.slug}
+              bookmarked={item.bookmarked}
+            />
+          ) : null}
           <ShareButton title={item.title} url={href} />
         </div>
       </footer>

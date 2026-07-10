@@ -234,8 +234,8 @@ export default async function NewsDetailPage(props: { params: Params }) {
 
       {/* Social Interactions Action Bar */}
       <div className="flex items-center gap-4 py-4 border-y border-line">
-        <LikeButton count={item.likes} />
-        <BookmarkButton bookmarked={item.bookmarked} />
+        <LikeButton type="news" slug={item.slug} count={item.likes} />
+        <BookmarkButton type="news" slug={item.slug} bookmarked={item.bookmarked} />
         <ShareButton title={item.title} url={`/news/${item.slug}`} />
       </div>
 

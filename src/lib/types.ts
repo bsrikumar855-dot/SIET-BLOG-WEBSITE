@@ -53,6 +53,8 @@ export interface Achievement {
   gallery: string[];
   certificateUrl?: string;
   projectLinks: { label: string; url: string }[];
+  likes: number;
+  bookmarked?: boolean;
 }
 
 export interface Paginated<T> {
@@ -66,5 +68,5 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "editor";
+  role: "admin" | "editor" | "reader";
 }

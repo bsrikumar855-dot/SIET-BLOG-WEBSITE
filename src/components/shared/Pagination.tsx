@@ -13,16 +13,17 @@ function pad(value: number) {
 export function Pagination({ page, pages, basePath = "#" }: PaginationProps) {
   const previous = Math.max(page - 1, 1);
   const next = Math.min(page + 1, pages);
+  const separator = basePath.includes("?") ? "&" : "?";
 
   return (
     <nav aria-label="Pagination" className="pagination">
-      <Link aria-label="Previous page" href={`${basePath}?page=${previous}`}>
+      <Link aria-label="Previous page" href={`${basePath}${separator}page=${previous}`}>
         ‹
       </Link>
       <span>
         {pad(page)} / {pad(pages)}
       </span>
-      <Link aria-label="Next page" href={`${basePath}?page=${next}`}>
+      <Link aria-label="Next page" href={`${basePath}${separator}page=${next}`}>
         ›
       </Link>
     </nav>

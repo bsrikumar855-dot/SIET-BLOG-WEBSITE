@@ -116,7 +116,9 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
     gallery: [
       "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=80",
     ],
-    projectLinks: []
+    projectLinks: [],
+    likes: 12,
+    bookmarked: false,
   },
 ];
 

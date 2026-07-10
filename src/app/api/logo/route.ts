@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const isBg = searchParams.get("bg") === "true";
 
   const publicLogoPath = path.join(process.cwd(), "public", "logo.png");
-  const uploadedLogoPath = `C:\\Users\\babus\\.gemini\\antigravity\\brain\\3911313d-3de2-4484-bea7-bfc5ce7399c5\\media__1783652591775.png`;
+  const uploadedLogoPath = `C:\\Users\\babus\\.gemini\\antigravity\\brain\\3911313d-3de2-4484-bea7-bfc5ce7399c5\\media__1783657802748.png`;
 
   // Copy new logo to public/logo.png if it exists
   if (fs.existsSync(uploadedLogoPath)) {

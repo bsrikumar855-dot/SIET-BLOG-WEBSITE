@@ -8,22 +8,22 @@ const TEAM_MEMBERS = [
   {
     id: "t1",
     name: "Shreekumar B",
-    role: "Lead Architect · Frontend",
+    role: "Developer",
     avatar: "https://github.com/bsrikumar855-dot.png",
     github: "https://github.com/bsrikumar855-dot",
     linkedin: "https://www.linkedin.com/in/shreekumar-b-103922381/",
-    tag: "Frontend",
+    tag: "Developer",
     description:
       "Designed and architected the entire frontend system — from the editorial design system to the ESPN-inspired scroll animations and responsive layout infrastructure.",
   },
   {
     id: "t2",
     name: "Suchit Sachin Chopade",
-    role: "Lead Backend",
+    role: "Developer",
     avatar: "https://github.com/suchitchopade3110-arch.png",
     github: "https://github.com/suchitchopade3110-arch",
     linkedin: "https://www.linkedin.com/in/suchit-chopade-635347338/",
-    tag: "Backend",
+    tag: "Developer",
     description:
       "Built and maintains the FastAPI backend, database schema, authentication layer, and API integrations that power the SIET News platform at scale.",
   },

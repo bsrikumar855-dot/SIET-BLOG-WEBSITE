@@ -158,8 +158,8 @@ export default function KitchenSinkPage() {
           <div className="kitchen-inline">
             <AuthorCard author={author} />
             <div className="action-demo">
-              <LikeButton count={24} />
-              <BookmarkButton />
+              <LikeButton type="news" slug="kitchen-sink" count={24} />
+              <BookmarkButton type="news" slug="kitchen-sink" />
               <ShareButton title="SIET News scratch route" url="/kitchen-sink" />
             </div>
           </div>

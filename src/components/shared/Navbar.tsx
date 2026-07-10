@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { TransparentLogo } from "./TransparentLogo";
+import { api } from "@/lib/api";
+import type { User } from "@/lib/types";
 
 const navItems = [
   ["Home", "/"],
@@ -18,11 +20,38 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isHeroActive, setIsHeroActive] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
-  // Close menu when route changes
+  // Close menu and refresh session state when route changes
   useEffect(() => {
     setOpen(false);
+    api.getCurrentUser()
+      .then((u) => {
+        if (u) {
+          setUser(u);
+          localStorage.setItem("siet_logged_in", "true");
+          localStorage.setItem("siet_user_role", u.role);
+        } else {
+          // If the API call returned null (offline or unauthorized), check offline session flags
+          const hasSessionFlag = localStorage.getItem("siet_logged_in") === "true";
+          const sessionRole = localStorage.getItem("siet_user_role");
+          if (hasSessionFlag && sessionRole) {
+            setUser({
+              id: `u-mock-${sessionRole}`,
+              name: sessionRole === "reader" ? "Dr. Babus" : "Offline Admin",
+              email: `${sessionRole}@siet.edu`,
+              role: sessionRole as any
+            });
+          } else {
+            setUser(null);
+            localStorage.removeItem("siet_logged_in");
+            localStorage.removeItem("siet_user_role");
+          }
+        }
+      })
+      .finally(() => setLoading(false));
   }, [pathname]);
 
   // Prevent scroll when overlay is active
@@ -76,6 +105,18 @@ export function Navbar() {
     };
   }, [pathname]);
 
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+      localStorage.removeItem("siet_logged_in");
+      localStorage.removeItem("siet_user_role");
+      setUser(null);
+      window.location.href = "/";
+    } catch (e) {
+      console.error("Logout failed:", e);
+    }
+  };
+
   return (
     <header className={`navbar ${open ? "navbar-open" : ""} ${scrolled ? "navbar-scrolled" : ""} ${isHeroActive ? "navbar-hero-mode" : ""}`}>
       <div className="navbar-inner">
@@ -122,7 +163,7 @@ export function Navbar() {
                 const numStr = String(index + 1).padStart(2, "0");
                 return (
                   <div key={href} className="menu-item-wrapper">
-                    <Link href={href} className="menu-item-link">
+                    <Link href={href} className="menu-item-link" onClick={() => setOpen(false)}>
                       <span className="menu-item-num">{numStr}.</span>
                       <span className="menu-item-label">{label}</span>
                     </Link>
@@ -137,12 +178,38 @@ export function Navbar() {
             <div className="menu-footer-credit">
               © Sri Shakthi Institute of Engineering and Technology
             </div>
-            <div className="menu-footer-links">
-              <Link href="/admin">Admin Console</Link>
+            <div className="menu-footer-links flex flex-wrap items-center gap-x-2 gap-y-1">
+              {!loading && (
+                <>
+                  {user ? (
+                    <>
+                      <span className="font-util text-[10px] text-ink-soft uppercase">Hello, {user.name}</span>
+                      <span className="separator">·</span>
+                      {user.role === "reader" ? (
+                        <Link href="/profile" onClick={() => setOpen(false)}>My Profile</Link>
+                      ) : (
+                        <Link href="/admin" onClick={() => setOpen(false)}>Admin Console</Link>
+                      )}
+                      <span className="separator">·</span>
+                      <button onClick={handleLogout} className="hover:text-accent bg-transparent border-none cursor-pointer text-ink font-util text-xs p-0 uppercase tracking-wider underline">
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login" onClick={() => setOpen(false)}>Login</Link>
+                      <span className="separator">·</span>
+                      <Link href="/register" onClick={() => setOpen(false)}>Register</Link>
+                      <span className="separator">·</span>
+                      <Link href="/admin" onClick={() => setOpen(false)}>Admin</Link>
+                    </>
+                  )}
+                  <span className="separator">·</span>
+                </>
+              )}
+              <Link href="/about" onClick={() => setOpen(false)}>About Lab</Link>
               <span className="separator">·</span>
-              <Link href="/about">About Lab</Link>
-              <span className="separator">·</span>
-              <Link href="/contact">Contact</Link>
+              <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
             </div>
           </div>
         </div>

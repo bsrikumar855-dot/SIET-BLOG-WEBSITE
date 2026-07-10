@@ -35,7 +35,9 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
     projectLinks: [
       { label: "GitHub Repository", url: "https://github.com/siet-ai/sih-2026" },
       { label: "Project Demo", url: "https://sih2026.siet.edu" }
-    ]
+    ],
+    likes: 32,
+    bookmarked: false,
   },
   {
     id: "ac2",
@@ -58,7 +60,9 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
     certificateUrl: "https://example.com/ieee-paper-cert.pdf",
     projectLinks: [
       { label: "IEEE Publisher Link", url: "https://ieeexplore.ieee.org" }
-    ]
+    ],
+    likes: 45,
+    bookmarked: false,
   },
   {
     id: "ac3",
@@ -80,7 +84,9 @@ const FALLBACK_ACHIEVEMENTS: Achievement[] = [
     ],
     projectLinks: [
       { label: "Demo Video", url: "https://youtube.com/siet-rover" }
-    ]
+    ],
+    likes: 21,
+    bookmarked: false,
   }
 ];
 
