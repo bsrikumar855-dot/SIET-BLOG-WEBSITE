@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { User } from "@/lib/types";
+import { TransparentLogo } from "@/components/shared";
 
 interface AdminSidebarProps {
   user: User;
@@ -69,15 +70,22 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       )}
 
       <aside className={`w-64 border-r border-line bg-paper-2 flex flex-col justify-between h-screen lg:sticky lg:top-0 font-util text-xs uppercase tracking-wider
-        fixed inset-y-0 left-0 z-40 lg:z-auto lg:static transition-transform duration-300
+        fixed inset-y-0 left-0 z-40 lg:z-auto transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}>
         {/* Top section: Brand & Navigation */}
         <div className="flex flex-col">
           {/* Brand Header */}
           <div className="p-6 border-b border-line">
-            <Link href="/admin" className="font-display text-body font-semibold text-ink lowercase tracking-normal block outline-none focus:outline-2 focus:outline-accent">
-              siet news admin
+            <Link href="/admin" className="font-display text-body font-semibold text-ink lowercase tracking-normal flex items-center gap-2 outline-none focus:outline-2 focus:outline-accent">
+              <TransparentLogo
+                src="/api/logo"
+                alt="SIET Logo"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-contain"
+              />
+              <span>siet news admin</span>
             </Link>
             <span className="text-[10px] text-ink-soft block mt-1">Management Desk</span>
           </div>

@@ -7,13 +7,29 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
   if (!(init?.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }
-  const res = await fetch(`${BASE}${path}`, {
-    credentials: "include",
-    headers: { ...headers, ...init?.headers },
-    ...init,
-  });
-  if (!res.ok) throw new Error(`${res.status} ${path}`);
-  return res.json();
+  try {
+    const res = await fetch(`${BASE}${path}`, {
+      credentials: "include",
+      headers: { ...headers, ...init?.headers },
+      ...init,
+    });
+    if (!res.ok) {
+      const err = new Error(`${res.status} ${path}`);
+      err.stack = err.message;
+      throw err;
+    }
+    return res.json();
+  } catch (err: any) {
+    if (err.message && (err.message.includes("fetch failed") || err.cause?.code === "ECONNREFUSED")) {
+      const cleanErr = new Error(`fetch failed: Connection refused to ${BASE}${path}`);
+      cleanErr.stack = cleanErr.message;
+      throw cleanErr;
+    }
+    if (err instanceof Error) {
+      err.stack = err.message;
+    }
+    throw err;
+  }
 }
 
 export const api = {

@@ -2,6 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/shared";
+import { ObamaHorizontalTimeline } from "@/components/signature/ObamaSlideAnimations";
 
 const TEAM_MEMBERS = [
   {
@@ -30,7 +31,8 @@ const TEAM_MEMBERS = [
 
 export default function AboutPage() {
   return (
-    <main className="kitchen-page">
+    <>
+      <main className="kitchen-page">
       {/* Header */}
       <header className="space-y-4">
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "About" }]} />
@@ -139,19 +141,55 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-8 border-t border-line flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <div>
-          <h3 className="font-display text-h3 font-medium text-ink">Have questions or want to collaborate?</h3>
-          <p className="font-body text-xs text-ink-soft mt-1">Get in touch with our researchers and coordinators.</p>
-        </div>
-        <Link
-          href="/contact"
-          className="explore-link font-util text-eyebrow uppercase tracking-wider inline-block text-accent border border-line px-5 py-2.5 hover:bg-paper-2 transition-colors"
-        >
-          Contact the Lab →
-        </Link>
+      </main>
+
+      {/* ── INTERACTIVE TIMELINE (FULL-BLEED) ── */}
+      <section className="border-t border-b border-line my-12">
+        <ObamaHorizontalTimeline events={TIMELINE_EVENTS} />
       </section>
-    </main>
+
+      <main className="kitchen-page pt-0">
+        {/* Contact CTA */}
+        <section className="py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div>
+            <h3 className="font-display text-h3 font-medium text-ink">Have questions or want to collaborate?</h3>
+            <p className="font-body text-xs text-ink-soft mt-1">Get in touch with our researchers and coordinators.</p>
+          </div>
+          <Link
+            href="/contact"
+            className="explore-link font-util text-eyebrow uppercase tracking-wider inline-block text-accent border border-line px-5 py-2.5 hover:bg-paper-2 transition-colors"
+          >
+            Contact the Lab →
+          </Link>
+        </section>
+      </main>
+    </>
   );
 }
+
+const TIMELINE_EVENTS = [
+  {
+    year: "2024",
+    category: "Lab Conception",
+    title: "Drafting the AI Research Lab Charter",
+    description: "Faculties and students establish the core vision: focusing on hardware-constrained edge computing and model optimization."
+  },
+  {
+    year: "2025",
+    category: "Robotics Core",
+    title: "LiDAR and RTOS Rover Benchmarks",
+    description: "The team runs local indoor spatial mapping trials, designing low-power autonomous navigation models."
+  },
+  {
+    year: "2026",
+    category: "Hackathon Triumph",
+    title: "First Place at Smart India Hackathon",
+    description: "Developing localized agricultural translation modules for real-time edge diagnostic models."
+  },
+  {
+    year: "2027",
+    category: "Open Research",
+    title: "Academic Conference Publishing",
+    description: "The lab publishes its fifth IEEE paper, focusing on responsible RAG architecture and green token footprints."
+  }
+];

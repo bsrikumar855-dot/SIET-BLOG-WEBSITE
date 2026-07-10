@@ -10,7 +10,6 @@ const navItems = [
   ["News", "/news"],
   ["Articles", "/articles"],
   ["Magazine", "/magazine"],
-  ["Search", "/search"],
   ["About", "/about"],
   ["Contact", "/contact"],
 ];

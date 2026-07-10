@@ -1,13 +1,29 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
+import path from "path";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const isBg = searchParams.get("bg") === "true";
 
+  const publicLogoPath = path.join(process.cwd(), "public", "logo.png");
+  const uploadedLogoPath = `C:\\Users\\babus\\.gemini\\antigravity\\brain\\3911313d-3de2-4484-bea7-bfc5ce7399c5\\media__1783652591775.png`;
+
+  // Copy new logo to public/logo.png if it exists
+  if (fs.existsSync(uploadedLogoPath)) {
+    try {
+      fs.copyFileSync(uploadedLogoPath, publicLogoPath);
+    } catch (copyErr) {
+      console.error("Error copying logo to public directory:", copyErr);
+    }
+  }
+
   if (!isBg) {
-    // Normal logo resolution
-    const filePath = `C:\\Users\\babus\\.gemini\\antigravity\\brain\\03035789-d2ae-4e2e-bfaa-85832134fa3b\\media__1783610114581.png`;
+    let filePath = publicLogoPath;
+    if (!fs.existsSync(filePath)) {
+      filePath = `C:\\Users\\babus\\.gemini\\antigravity\\brain\\03035789-d2ae-4e2e-bfaa-85832134fa3b\\media__1783610114581.png`;
+    }
+
     try {
       const fileBuffer = fs.readFileSync(filePath);
       return new NextResponse(fileBuffer, {
