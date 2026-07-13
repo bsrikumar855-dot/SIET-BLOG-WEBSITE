@@ -1,0 +1,6 @@
+# Enable pycodestyle (E), Pyflakes (F), isort (I), pep8-naming (N), upgrade (UP), and async (ASYNC) codes
+select = ["E", "F", "I", "N", "UP", "ASYNC"]
+ignore = []
+
+line-length = 88
+target-version = "py311"
