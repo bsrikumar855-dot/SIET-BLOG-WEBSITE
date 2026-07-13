@@ -16,6 +16,14 @@ from app.core.config import settings
 from app.core.database import Base
 # Import all models to ensure they are registered on Base.metadata
 from app.modules.auth.models import User
+from app.modules.domains.models import Domain
+from app.modules.tags.models import Tag
+from app.modules.media.models import Media
+from app.modules.news.models import News
+from app.modules.articles.models import Article
+from app.modules.magazine.models import Magazine, MagazineAchievement, MagazineProjectLink
+from app.modules.engagement.models import Like, Bookmark
+from app.modules.analytics.models import PageView, TrendingMetric
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

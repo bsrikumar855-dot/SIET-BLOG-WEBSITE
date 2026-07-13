@@ -10,22 +10,20 @@ class BaseRepository(Generic[T]):
         self.model = model
 
     async def create(self, entity: T) -> T:
-        """Saves a new entity instance to the database."""
+        """Saves a new entity instance to the database. Does not commit."""
         self.db.add(entity)
-        await self.db.commit()
-        await self.db.refresh(entity)
+        await self.db.flush()
         return entity
 
     async def update(self, entity: T) -> T:
-        """Commits changes on an existing entity instance."""
-        await self.db.commit()
-        await self.db.refresh(entity)
+        """Marks an existing entity for update. Commits are handled by the service layer."""
+        # The entity is usually already in the session, but we can do self.db.add if needed
+        # self.db.add(entity)
         return entity
 
     async def delete(self, entity: T) -> None:
-        """Deletes an entity instance from the database."""
+        """Deletes an entity instance from the database. Does not commit."""
         await self.db.delete(entity)
-        await self.db.commit()
 
     async def get_by_id(self, entity_id: Any) -> Optional[T]:
         """Fetches an entity by its primary key ID."""

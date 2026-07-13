@@ -22,6 +22,11 @@ def parse_cors_origins(v: Union[str, List[str]]) -> List[str]:
         return [str(i) for i in v]
     return []
 
+def parse_debug_flag(v: object) -> object:
+    if isinstance(v, str) and v.lower() in {"release", "prod", "production"}:
+        return False
+    return v
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
@@ -30,7 +35,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "SIET Portal API"
     APP_VERSION: str = "1.0.0"
     ENV: Environment = Environment.development
-    DEBUG: bool = False
+    DEBUG: Annotated[bool, BeforeValidator(parse_debug_flag)] = False
     API_PREFIX: str = "/api/v1"
     LOG_LEVEL: str = "INFO"
 

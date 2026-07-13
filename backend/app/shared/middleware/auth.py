@@ -1,4 +1,6 @@
 from starlette.types import ASGIApp, Scope, Receive, Send
+from starlette.datastructures import Headers
+from app.core.config import settings
 from app.core.security import decode_token
 
 class AuthenticationMiddleware:
@@ -14,14 +16,20 @@ class AuthenticationMiddleware:
         scope["state"]["user"] = None
         scope["state"]["role"] = None
 
-        auth_header = None
-        for key, value in scope.get("headers", []):
-            if key == b"authorization":
-                auth_header = value.decode("utf-8")
-                break
+        headers = Headers(scope=scope)
+        auth_header = headers.get("authorization")
 
+        token = None
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
+        elif headers.get("cookie"):
+            for chunk in headers["cookie"].split(";"):
+                name, _, value = chunk.strip().partition("=")
+                if name == settings.ACCESS_COOKIE_NAME:
+                    token = value
+                    break
+
+        if token:
             payload = decode_token(token)
             if payload and payload.type == "access":
                 scope["state"]["user"] = payload.sub

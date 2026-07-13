@@ -46,10 +46,23 @@ class BaseModelMixin:
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False
     )
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), 
+        nullable=True
+    )
+    version: Mapped[int] = mapped_column(
+        default=1,
+        server_default="1",
+        nullable=False
+    )
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
         try:
             yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
         finally:
             await session.close()

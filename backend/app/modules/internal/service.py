@@ -13,3 +13,8 @@ class InternalService:
     async def fetch_news_external() -> dict:
         """Mock placeholder logic for external RSS feed parser runs."""
         return {"status": "success", "message": "External news fetch task scheduled"}
+
+    @staticmethod
+    async def trigger_analytics() -> dict:
+        """Mock placeholder logic for analytics trending calculation."""
+        return {"status": "success", "message": "Analytics trending calculation triggered"}

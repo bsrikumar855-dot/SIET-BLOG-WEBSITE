@@ -11,3 +11,4 @@ resend>=0.8.0
 pytest>=8.1.1
 pytest-asyncio>=0.23.5
 httpx>=0.27.0
+python-multipart
