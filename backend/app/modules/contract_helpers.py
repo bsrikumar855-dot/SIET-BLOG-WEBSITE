@@ -190,10 +190,6 @@ async def serialize_magazine(
             {"label": link.title, "url": link.url}
             for link in getattr(item, "project_links", [])
         ],
-        "achievements": [
-            {"id": str(achievement.id), "title": achievement.title, "description": achievement.description}
-            for achievement in getattr(item, "achievements", [])
-        ],
         "likes": await like_count(db, item.id, kind),
         "bookmarked": await is_bookmarked(db, item.id, kind, current_user_id),
     }

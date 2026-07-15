@@ -23,7 +23,7 @@ from app.modules.contract_helpers import (
 from app.modules.domains.models import Domain
 from app.modules.magazine.models import Magazine
 from app.modules.news.models import News
-from app.shared.types.content import ContentStatus
+from app.shared.types.content import ContentStatus, ContentKind
 
 router = APIRouter(tags=["Public Contract"])
 
@@ -94,4 +94,70 @@ async def home(db: AsyncSession = Depends(get_db)):
         "articlesCount": await db.scalar(select(func.count()).select_from(Article).where(Article.status == ContentStatus.PUBLISHED)) or 0,
         "magazineCount": await db.scalar(select(func.count()).select_from(Magazine).where(Magazine.status == ContentStatus.PUBLISHED)) or 0,
         "featureMosaic": [],
+    }
+
+from app.modules.engagement.models import Like, Bookmark
+from app.shared.exceptions.custom import ForbiddenException
+from app.modules.auth.repository import UserRepository
+from fastapi.responses import JSONResponse
+from fastapi import Request
+
+@router.get("/me/likes")
+async def get_my_likes(request: Request, db: AsyncSession = Depends(get_db)):
+    user_id = getattr(request.state, "user", None)
+    if not user_id:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
+    
+    user = await UserRepository(db).get_by_id(int(user_id))
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
+    if not getattr(user, 'email_verified', False):
+        raise ForbiddenException("Email not verified.")
+
+    news_ids = (await db.scalars(select(Like.content_id).where(Like.user_id == user.id, Like.content_kind == ContentKind.NEWS))).all()
+    article_ids = (await db.scalars(select(Like.content_id).where(Like.user_id == user.id, Like.content_kind == ContentKind.ARTICLE))).all()
+    magazine_ids = (await db.scalars(select(Like.content_id).where(Like.user_id == user.id, Like.content_kind == ContentKind.MAGAZINE))).all()
+
+    news_rows = list((await db.scalars(select(News).where(News.id.in_(news_ids), News.status == ContentStatus.PUBLISHED))).all()) if news_ids else []
+    article_rows = list((await db.scalars(select(Article).where(Article.id.in_(article_ids), Article.status == ContentStatus.PUBLISHED))).all()) if article_ids else []
+    magazine_rows = list((await db.scalars(select(Magazine).where(Magazine.id.in_(magazine_ids), Magazine.status == ContentStatus.PUBLISHED))).all()) if magazine_ids else []
+
+    domains = await get_domain_map(db)
+    users = await get_user_map(db)
+    media = await get_media_map(db)
+
+    return {
+        "news": [await serialize_news(db, row, domains=domains, media=media, current_user_id=user.id) for row in news_rows],
+        "articles": [await serialize_article(db, row, domains=domains, users=users, media=media, current_user_id=user.id) for row in article_rows],
+        "magazine": [await serialize_magazine(db, row, media=media, current_user_id=user.id) for row in magazine_rows],
+    }
+
+@router.get("/me/bookmarks")
+async def get_my_bookmarks(request: Request, db: AsyncSession = Depends(get_db)):
+    user_id = getattr(request.state, "user", None)
+    if not user_id:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
+    
+    user = await UserRepository(db).get_by_id(int(user_id))
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
+    if not getattr(user, 'email_verified', False):
+        raise ForbiddenException("Email not verified.")
+
+    news_ids = (await db.scalars(select(Bookmark.content_id).where(Bookmark.user_id == user.id, Bookmark.content_kind == ContentKind.NEWS))).all()
+    article_ids = (await db.scalars(select(Bookmark.content_id).where(Bookmark.user_id == user.id, Bookmark.content_kind == ContentKind.ARTICLE))).all()
+    magazine_ids = (await db.scalars(select(Bookmark.content_id).where(Bookmark.user_id == user.id, Bookmark.content_kind == ContentKind.MAGAZINE))).all()
+
+    news_rows = list((await db.scalars(select(News).where(News.id.in_(news_ids), News.status == ContentStatus.PUBLISHED))).all()) if news_ids else []
+    article_rows = list((await db.scalars(select(Article).where(Article.id.in_(article_ids), Article.status == ContentStatus.PUBLISHED))).all()) if article_ids else []
+    magazine_rows = list((await db.scalars(select(Magazine).where(Magazine.id.in_(magazine_ids), Magazine.status == ContentStatus.PUBLISHED))).all()) if magazine_ids else []
+
+    domains = await get_domain_map(db)
+    users = await get_user_map(db)
+    media = await get_media_map(db)
+
+    return {
+        "news": [await serialize_news(db, row, domains=domains, media=media, current_user_id=user.id) for row in news_rows],
+        "articles": [await serialize_article(db, row, domains=domains, users=users, media=media, current_user_id=user.id) for row in article_rows],
+        "magazine": [await serialize_magazine(db, row, media=media, current_user_id=user.id) for row in magazine_rows],
     }

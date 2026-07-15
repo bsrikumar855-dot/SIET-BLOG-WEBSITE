@@ -44,20 +44,20 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   login: async (b: { email: string; password: string }) => {
     currentUserPromise = null;
-    const u = await req<User>("/login", { method: "POST", body: JSON.stringify(b) });
+    const u = await req<User>("/auth/login", { method: "POST", body: JSON.stringify(b) });
     currentUserPromise = Promise.resolve(u);
     return u;
   },
   logout: async () => {
     currentUserPromise = null;
-    const res = await req<unknown>("/logout", { method: "POST" });
+    const res = await req<unknown>("/auth/logout", { method: "POST" });
     currentUserPromise = Promise.resolve(null);
     return res;
   },
-  me: () => req<User>("/me"),
+  me: () => req<User>("/auth/me"),
   getCurrentUser: (forceRefresh = false): Promise<User | null> => {
     if (forceRefresh || !currentUserPromise) {
-      currentUserPromise = req<User>("/me").catch(() => null);
+      currentUserPromise = req<User>("/auth/me").catch(() => null);
     }
     return currentUserPromise;
   },
@@ -66,7 +66,7 @@ export const api = {
   },
   register: async (b: { name: string; email: string; password: string }) => {
     currentUserPromise = null;
-    return req<User>("/register", { method: "POST", body: JSON.stringify(b) });
+    return req<User>("/auth/register", { method: "POST", body: JSON.stringify(b) });
   },
 
   likeStatus: (type: "news" | "articles" | "magazine", slug: string) =>

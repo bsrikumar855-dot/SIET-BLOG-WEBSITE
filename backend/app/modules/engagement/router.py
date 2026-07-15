@@ -63,6 +63,8 @@ async def bookmark_status_contract(
     return {"bookmarked": bookmarked}
 
 
+from fastapi.responses import JSONResponse
+
 async def like_contract(
     db: AsyncSession,
     request: Request,
@@ -70,8 +72,10 @@ async def like_contract(
     slug: str,
     kind: ContentKind,
 ):
+    user = await _current_user(db, request)
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
     item = await _content_by_slug(db, model, slug)
-    user = await _required_user(db, request)
     result = await EngagementService(EngagementRepository(db)).toggle_like(user, item.id, kind)
     return {"liked": result.status, "count": await EngagementRepository(db).count_likes(item.id, kind)}
 
@@ -83,14 +87,12 @@ async def unlike_contract(
     slug: str,
     kind: ContentKind,
 ):
+    user = await _current_user(db, request)
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
     item = await _content_by_slug(db, model, slug)
-    user = await _required_user(db, request)
-    repo = EngagementRepository(db)
-    existing = await repo.get_like(user.id, item.id, kind)
-    if existing:
-        await repo.remove_like(existing)
-        await db.commit()
-    return {"liked": False, "count": await repo.count_likes(item.id, kind)}
+    await EngagementService(EngagementRepository(db)).remove_like(user, item.id, kind)
+    return {"liked": False, "count": await EngagementRepository(db).count_likes(item.id, kind)}
 
 
 async def bookmark_contract(
@@ -100,8 +102,10 @@ async def bookmark_contract(
     slug: str,
     kind: ContentKind,
 ):
+    user = await _current_user(db, request)
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
     item = await _content_by_slug(db, model, slug)
-    user = await _required_user(db, request)
     result = await EngagementService(EngagementRepository(db)).toggle_bookmark(user, item.id, kind)
     return {"bookmarked": result.status}
 
@@ -113,11 +117,9 @@ async def unbookmark_contract(
     slug: str,
     kind: ContentKind,
 ):
+    user = await _current_user(db, request)
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "auth_required"})
     item = await _content_by_slug(db, model, slug)
-    user = await _required_user(db, request)
-    repo = EngagementRepository(db)
-    existing = await repo.get_bookmark(user.id, item.id, kind)
-    if existing:
-        await repo.remove_bookmark(existing)
-        await db.commit()
+    await EngagementService(EngagementRepository(db)).remove_bookmark(user, item.id, kind)
     return {"bookmarked": False}
