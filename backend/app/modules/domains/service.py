@@ -38,14 +38,14 @@ class DomainService:
         await self.repository.db.refresh(domain)
         return domain
 
-    async def update_domain(self, domain_id: int, domain_in: DomainUpdate) -> Domain:
-        domain = await self.get_domain(domain_id)
+    async def update_domain(self, slug: str, domain_in: DomainUpdate) -> Domain:
+        domain = await self.get_domain_by_slug(slug)
         
         update_dict = domain_in.model_dump(exclude_unset=True)
         if "name" in update_dict and update_dict["name"] != domain.name:
-            slug = generate_slug(update_dict["name"])
-            slug = await ensure_unique_slug(self.repository.db, Domain, slug, exclude_id=domain_id)
-            update_dict["slug"] = slug
+            new_slug = generate_slug(update_dict["name"])
+            new_slug = await ensure_unique_slug(self.repository.db, Domain, new_slug, exclude_id=domain.id)
+            update_dict["slug"] = new_slug
             
         for key, value in update_dict.items():
             setattr(domain, key, value)
@@ -55,7 +55,7 @@ class DomainService:
         await self.repository.db.refresh(domain)
         return domain
 
-    async def delete_domain(self, domain_id: int) -> None:
-        domain = await self.get_domain(domain_id)
+    async def delete_domain(self, slug: str) -> None:
+        domain = await self.get_domain_by_slug(slug)
         await self.repository.delete(domain)
         await self.repository.db.commit()

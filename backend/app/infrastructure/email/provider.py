@@ -24,6 +24,11 @@ class EmailProvider:
     async def send_verification_email(self, to_email: str, token: str) -> bool:
         """Asynchronously triggers verification email using provider templates."""
         verification_link = f"http://localhost:3000/verify-email?token={token}"
+        from app.core.config import settings, Environment
+        from app.core.logging import logger
+        if settings.ENV in (Environment.development, Environment.testing) and not settings.EMAIL_API_KEY.get_secret_value():
+            logger.info(f"[DEV EMAIL] Verification Link for {to_email}: {verification_link}")
+            return True
         html_content = get_verification_html(verification_link)
         params = {
             "from": self.from_email,
