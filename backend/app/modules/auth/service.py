@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from fastapi import BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.auth.models import User
 from app.modules.auth.repository import UserRepository
@@ -12,7 +13,7 @@ class AuthService:
         self.repo = UserRepository(db)
         self.email_provider = EmailProvider()
 
-    async def register(self, data: RegisterRequest) -> User:
+    async def register(self, data: RegisterRequest, background_tasks: BackgroundTasks) -> User:
         if await self.repo.exists(data.email):
             raise ConflictException("Email already registered.")
         
@@ -30,7 +31,7 @@ class AuthService:
         created_user = await self.repo.create(user)
         
         # Trigger email verification asynchronously/proactively
-        await self.email_provider.send_verification_email(user.email, raw_token)
+        background_tasks.add_task(self.email_provider.send_verification_email, user.email, raw_token)
         return created_user
 
     async def login(self, data: LoginRequest) -> tuple[str, str, User]:
