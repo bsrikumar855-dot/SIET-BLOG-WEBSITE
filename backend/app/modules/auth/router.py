@@ -52,7 +52,6 @@ async def login(
     access_token, refresh_token, user = await service.login(data)
     response_data = LoginResponse(
         access_token=access_token,
-        refresh_token=refresh_token,
         user=UserResponse.model_validate(user),
     )
 

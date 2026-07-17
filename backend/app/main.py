@@ -18,6 +18,9 @@ from app.modules.magazine.router import router as magazine_router
 from app.modules.engagement.router import router as engagement_router
 from app.modules.analytics.router import router as analytics_router
 from app.modules.search.router import router as search_router
+from app.modules.home.router import router as home_router
+from app.modules.admin.router import router as admin_router
+
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -62,3 +65,5 @@ app.include_router(magazine_router, prefix=settings.API_PREFIX)
 app.include_router(engagement_router, prefix=settings.API_PREFIX)
 app.include_router(analytics_router, prefix=settings.API_PREFIX)
 app.include_router(search_router, prefix=settings.API_PREFIX)
+app.include_router(home_router, prefix=settings.API_PREFIX)
+app.include_router(admin_router, prefix=settings.API_PREFIX)

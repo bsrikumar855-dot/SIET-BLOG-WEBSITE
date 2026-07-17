@@ -49,12 +49,8 @@ class MediaService:
 
         public_url = self.storage.public_url(file_key)
         
-        # Optionally generate thumbnail for images (stubbed for now)
+        # Optionally generate thumbnail for images (handled via BackgroundTasks in router)
         thumbnail_url = None
-        if media_type == MediaType.IMAGE:
-            # Assume we have a serverless function generating thumbnails or we just do client side
-            # We will use the same URL for now or a specific subpath
-            thumbnail_url = public_url 
             
         media = Media(
             filename=filename,
