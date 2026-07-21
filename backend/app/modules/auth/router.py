@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -32,9 +32,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
     response_model=SuccessResponse[RegisterResponse],
     status_code=status.HTTP_201_CREATED,
 )
-async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
+async def register(data: RegisterRequest, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
-    user = await service.register(data)
+    user = await service.register(data, background_tasks)
     response_data = RegisterResponse(
         user=UserResponse.model_validate(user),
         message="Registration successful. Verification email sent.",

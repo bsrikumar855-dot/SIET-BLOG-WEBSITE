@@ -59,6 +59,24 @@ async def is_bookmarked(
     return result.scalar() is not None
 
 
+async def is_liked(
+    db: AsyncSession,
+    content_id: int,
+    kind: ContentKind,
+    user_id: int | None,
+) -> bool:
+    if not user_id:
+        return False
+    result = await db.execute(
+        select(Like.id).where(
+            Like.user_id == user_id,
+            Like.content_id == content_id,
+            Like.content_kind == kind,
+        )
+    )
+    return result.scalar() is not None
+
+
 def domain_payload(domain: Domain | None) -> dict[str, Any]:
     if not domain:
         return {"slug": "general", "name": "General", "count": 0}
@@ -127,8 +145,8 @@ async def serialize_news(
         "publishedAt": (item.published_at or item.created_at).isoformat(),
         "trending": False,
         "likes": await like_count(db, item.id, kind),
+        "liked": await is_liked(db, item.id, kind, current_user_id),
         "bookmarked": await is_bookmarked(db, item.id, kind, current_user_id),
-        "content": item.content,
     }
 
 
@@ -158,6 +176,7 @@ async def serialize_article(
         "publishedAt": (item.published_at or item.created_at).isoformat(),
         "readingMinutes": item.reading_time_minutes,
         "likes": await like_count(db, item.id, kind),
+        "liked": await is_liked(db, item.id, kind, current_user_id),
         "bookmarked": await is_bookmarked(db, item.id, kind, current_user_id),
     }
 
@@ -190,11 +209,8 @@ async def serialize_magazine(
             {"label": link.title, "url": link.url}
             for link in getattr(item, "project_links", [])
         ],
-        "achievements": [
-            {"id": str(achievement.id), "title": achievement.title, "description": achievement.description}
-            for achievement in getattr(item, "achievements", [])
-        ],
         "likes": await like_count(db, item.id, kind),
+        "liked": await is_liked(db, item.id, kind, current_user_id),
         "bookmarked": await is_bookmarked(db, item.id, kind, current_user_id),
     }
 

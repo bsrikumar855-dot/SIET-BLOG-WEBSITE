@@ -3,6 +3,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.articles.models import Article
+from app.modules.analytics.models import TrendingMetric
 from app.modules.contract_helpers import (
     get_domain_map,
     get_media_map,
@@ -13,7 +14,7 @@ from app.modules.contract_helpers import (
 )
 from app.modules.magazine.models import Magazine
 from app.modules.news.models import News
-from app.shared.types.content import ContentStatus
+from app.shared.types.content import ContentStatus, ContentKind
 
 
 class HomeService:
@@ -39,13 +40,17 @@ class HomeService:
             .all()
         )
 
-        # 2. Trending News (latest 6 published news)
+        # 2. Trending News (driven by the real TrendingMetric table)
         trending_rows = list(
             (
                 await self.db.execute(
                     select(News)
-                    .where(News.status == ContentStatus.PUBLISHED)
-                    .order_by(News.published_at.desc().nullslast(), News.id.desc())
+                    .join(TrendingMetric, News.id == TrendingMetric.content_id)
+                    .where(
+                        TrendingMetric.content_kind == ContentKind.NEWS,
+                        News.status == ContentStatus.PUBLISHED,
+                    )
+                    .order_by(TrendingMetric.score.desc())
                     .limit(6)
                 )
             )

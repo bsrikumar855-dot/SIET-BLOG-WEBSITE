@@ -17,3 +17,15 @@ build/
 # system
 .DS_Store
 Thumbs.db
+
+# Local test artifacts
+postgres.zip
+pg_local/
+logfile
+*.json
+__pycache__/
+.env
+
+patch_admin.py
+
+app_backup_*/

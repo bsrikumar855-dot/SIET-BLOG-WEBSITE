@@ -12,6 +12,7 @@ from app.modules.internal.router import router as internal_router
 from app.modules.domains.router import router as domains_router
 from app.modules.tags.router import router as tags_router
 from app.modules.media.router import router as media_router
+from app.modules.admin.router import router as admin_router
 from app.modules.news.router import router as news_router
 from app.modules.articles.router import router as articles_router
 from app.modules.magazine.router import router as magazine_router
@@ -19,8 +20,6 @@ from app.modules.engagement.router import router as engagement_router
 from app.modules.analytics.router import router as analytics_router
 from app.modules.search.router import router as search_router
 from app.modules.home.router import router as home_router
-from app.modules.admin.router import router as admin_router
-
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -53,17 +52,17 @@ app.add_middleware(
 register_exception_handlers(app)
 
 # Mount slice routers under API prefix
+app.include_router(home_router, prefix=settings.API_PREFIX)
 app.include_router(auth_router, prefix=settings.API_PREFIX)
 app.include_router(health_router, prefix=settings.API_PREFIX)
 app.include_router(internal_router, prefix=settings.API_PREFIX)
 app.include_router(domains_router, prefix=settings.API_PREFIX)
 app.include_router(tags_router, prefix=settings.API_PREFIX)
 app.include_router(media_router, prefix=settings.API_PREFIX)
+app.include_router(admin_router, prefix=settings.API_PREFIX)
 app.include_router(news_router, prefix=settings.API_PREFIX)
 app.include_router(articles_router, prefix=settings.API_PREFIX)
 app.include_router(magazine_router, prefix=settings.API_PREFIX)
 app.include_router(engagement_router, prefix=settings.API_PREFIX)
 app.include_router(analytics_router, prefix=settings.API_PREFIX)
 app.include_router(search_router, prefix=settings.API_PREFIX)
-app.include_router(home_router, prefix=settings.API_PREFIX)
-app.include_router(admin_router, prefix=settings.API_PREFIX)
