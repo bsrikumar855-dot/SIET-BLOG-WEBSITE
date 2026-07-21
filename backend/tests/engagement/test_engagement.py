@@ -41,7 +41,7 @@ async def test_get_my_likes(client: AsyncClient, verified_user_token: str):
         headers={"Authorization": f"Bearer {verified_user_token}"}
     )
     assert res.status_code == 200
-    data = res.json()["data"]
+    data = res.json()
     assert "news" in data
     assert "articles" in data
     assert "magazine" in data
@@ -53,7 +53,7 @@ async def test_get_my_bookmarks(client: AsyncClient, verified_user_token: str):
         headers={"Authorization": f"Bearer {verified_user_token}"}
     )
     assert res.status_code == 200
-    data = res.json()["data"]
+    data = res.json()
     assert "news" in data
     assert "articles" in data
     assert "magazine" in data

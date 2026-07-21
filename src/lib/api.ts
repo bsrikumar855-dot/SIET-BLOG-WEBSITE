@@ -1,6 +1,6 @@
 import type { Achievement, Article, Domain, NewsItem, Paginated, User } from "./types";
 
-const BASE = process.env.NEXT_PUBLIC_API_BASE!;
+const BASE = `${process.env.NEXT_PUBLIC_API_BASE!}/api/v1`;
 
 let currentUserPromise: Promise<User | null> | null = null;
 
@@ -44,9 +44,12 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   login: async (b: { email: string; password: string }) => {
     currentUserPromise = null;
-    const u = await req<User>("/auth/login", { method: "POST", body: JSON.stringify(b) });
-    currentUserPromise = Promise.resolve(u);
-    return u;
+    const res = await req<{ access_token: string; user: User }>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(b),
+    });
+    currentUserPromise = Promise.resolve(res.user);
+    return res.user;
   },
   logout: async () => {
     currentUserPromise = null;

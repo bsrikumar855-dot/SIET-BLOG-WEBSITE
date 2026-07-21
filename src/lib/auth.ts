@@ -10,8 +10,8 @@ export async function getSession(): Promise<User | null> {
       return null;
     }
 
-    const BASE = process.env.NEXT_PUBLIC_API_BASE!;
-    const res = await fetch(`${BASE}/me`, {
+    const BASE = `${process.env.NEXT_PUBLIC_API_BASE!}/api/v1`;
+    const res = await fetch(`${BASE}/auth/me`, {
       headers: {
         "Content-Type": "application/json",
         Cookie: cookieHeader,

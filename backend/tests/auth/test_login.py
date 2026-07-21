@@ -20,17 +20,17 @@ async def test_login_success_and_me_retrieval(client: AsyncClient):
     }
     res = await client.post("/api/v1/auth/login", json=login_payload)
     assert res.status_code == 200
-    assert res.json()["success"] is True
-    
-    data = res.json()["data"]
+
+    data = res.json()
     access_token = data["access_token"]
     assert access_token is not None
+    assert data["user"]["email"] == email
 
     # Retrieve profile
     headers = {"Authorization": f"Bearer {access_token}"}
     res = await client.get("/api/v1/auth/me", headers=headers)
     assert res.status_code == 200
-    assert res.json()["data"]["email"] == email
+    assert res.json()["email"] == email
 
 @pytest.mark.asyncio
 async def test_login_failure(client: AsyncClient):
