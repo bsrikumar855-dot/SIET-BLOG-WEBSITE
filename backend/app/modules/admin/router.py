@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
@@ -334,3 +334,15 @@ async def admin_delete_tag(
     await service.delete_tag(tag_id)
     return None
 
+# FEATURED (not yet implemented — no `featured` table exists)
+@router.get("/featured")
+async def get_featured(current_user: User = Depends(require_admin)):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Featured content is not yet implemented.")
+
+@router.post("/featured")
+async def create_featured(current_user: User = Depends(require_admin)):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Featured content is not yet implemented.")
+
+@router.delete("/featured/{id}")
+async def delete_featured(id: int, current_user: User = Depends(require_admin)):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Featured content is not yet implemented.")

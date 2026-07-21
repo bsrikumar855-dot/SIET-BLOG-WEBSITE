@@ -20,10 +20,11 @@ async def test_token_refresh(client: AsyncClient):
     }
     res = await client.post("/api/v1/auth/login", json=login_payload)
     assert res.status_code == 200
-    
-    refresh_token = res.json()["data"]["refresh_token"]
+    assert "refresh_token" not in res.json()["data"]
+    assert "refresh_token" in res.cookies
 
-    res = await client.post(f"/api/v1/auth/refresh?refresh_token={refresh_token}")
+    # The refresh token is httpOnly-cookie-only; the client's cookie jar carries it automatically.
+    res = await client.post("/api/v1/auth/refresh")
     assert res.status_code == 200
     assert res.json()["success"] is True
     assert res.json()["data"]["access_token"] is not None
