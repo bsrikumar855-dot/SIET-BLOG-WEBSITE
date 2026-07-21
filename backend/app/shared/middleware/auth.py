@@ -1,7 +1,9 @@
-from starlette.types import ASGIApp, Scope, Receive, Send
 from starlette.datastructures import Headers
+from starlette.types import ASGIApp, Receive, Scope, Send
+
 from app.core.config import settings
 from app.core.security import decode_token
+
 
 class AuthenticationMiddleware:
     def __init__(self, app: ASGIApp):

@@ -1,7 +1,8 @@
-from typing import Optional
-from datetime import datetime
+
 from pydantic import BaseModel
+
 from app.shared.types.content import ContentKind
+
 
 class EngagementToggle(BaseModel):
     content_id: int
@@ -12,7 +13,7 @@ class EngagementStatus(BaseModel):
     content_kind: ContentKind
     is_liked: bool
     is_bookmarked: bool
-    total_likes: Optional[int] = None
+    total_likes: int | None = None
 
 class ToggleResponse(BaseModel):
     status: bool

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15-alpine
@@ -31,11 +29,10 @@ services:
       - MEILI_ENV=development
     volumes:
       - meili_data:/meili_data
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7700/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    # No healthcheck here: the getmeili/meilisearch image has neither wget nor curl,
+    # so a command-based healthcheck can't be run inside it. The backend's own
+    # /api/v1/health/search endpoint reports Meilisearch reachability at runtime instead,
+    # and the app degrades gracefully (logs + unhealthy status) if it's unreachable.
 
   backend:
     build: .
@@ -45,13 +42,22 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      # .env's DATABASE_URL/MEILI_URL default to localhost for running the app directly
+      # on the host; inside Compose's network the other services are reachable by their
+      # service name instead, so override both here rather than making the .env default
+      # wrong for the non-Docker case.
+      DATABASE_URL: postgresql+asyncpg://postgres:postgrespassword@db:5432/siet_db
+      MEILI_URL: http://meilisearch:7700
     depends_on:
       db:
         condition: service_healthy
       meilisearch:
-        condition: service_healthy
+        condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:8000/api/v1/health"]
+      # python:3.11-slim has neither wget nor curl installed; the interpreter running
+      # the app itself is the one thing guaranteed present, so use it for the check.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
       interval: 10s
       timeout: 5s
       retries: 3

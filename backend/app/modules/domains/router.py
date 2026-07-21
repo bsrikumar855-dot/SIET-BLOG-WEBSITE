@@ -1,12 +1,11 @@
+from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends
 
 from app.core.database import get_db
 from app.modules.articles.models import Article
 from app.modules.contract_helpers import serialize_domain
 from app.modules.domains.models import Domain
-from app.modules.magazine.models import Magazine
 from app.modules.news.models import News
 from app.shared.exceptions.custom import NotFoundException
 from app.shared.types.content import ContentStatus

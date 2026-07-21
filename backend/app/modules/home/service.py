@@ -1,9 +1,9 @@
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from app.modules.articles.models import Article
 from app.modules.analytics.models import TrendingMetric
+from app.modules.articles.models import Article
 from app.modules.contract_helpers import (
     get_domain_map,
     get_media_map,
@@ -14,7 +14,7 @@ from app.modules.contract_helpers import (
 )
 from app.modules.magazine.models import Magazine
 from app.modules.news.models import News
-from app.shared.types.content import ContentStatus, ContentKind
+from app.shared.types.content import ContentKind, ContentStatus
 
 
 class HomeService:

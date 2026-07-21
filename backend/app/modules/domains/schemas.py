@@ -1,17 +1,18 @@
-from typing import Optional, List
 from datetime import datetime
+
 from pydantic import BaseModel, Field
+
 
 class DomainBase(BaseModel):
     name: str = Field(..., max_length=100)
-    description: Optional[str] = None
+    description: str | None = None
 
 class DomainCreate(DomainBase):
     pass
 
 class DomainUpdate(BaseModel):
-    name: Optional[str] = Field(None, max_length=100)
-    description: Optional[str] = None
+    name: str | None = Field(None, max_length=100)
+    description: str | None = None
 
 class DomainResponse(DomainBase):
     id: int

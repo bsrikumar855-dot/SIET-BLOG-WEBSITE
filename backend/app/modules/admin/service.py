@@ -1,6 +1,11 @@
-from typing import Dict, Any
 from app.modules.admin.repository import AdminRepository
-from app.modules.admin.schemas import DashboardResponse, AnalyticsResponse, DashboardTotals, DashboardActivity
+from app.modules.admin.schemas import (
+    AnalyticsResponse,
+    DashboardActivity,
+    DashboardResponse,
+    DashboardTotals,
+)
+
 
 class AdminService:
     def __init__(self, repository: AdminRepository):

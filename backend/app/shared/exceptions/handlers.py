@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from app.shared.exceptions.custom import APIException
-from app.shared.responses.schemas import ErrorResponse, ErrorDetail
+
 from app.core.logging import logger
+from app.shared.exceptions.custom import APIException
+from app.shared.responses.schemas import ErrorDetail, ErrorResponse
+
 
 async def api_exception_handler(request: Request, exc: APIException) -> JSONResponse:
     error_response = ErrorResponse(
@@ -49,6 +51,8 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
     )
 
 def register_exception_handlers(app: FastAPI) -> None:
-    app.add_exception_handler(APIException, api_exception_handler)
-    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    # Starlette's add_exception_handler is typed for exactly Callable[[Request, Exception], ...];
+    # narrower per-exception-type handlers are the documented FastAPI pattern but don't satisfy that signature.
+    app.add_exception_handler(APIException, api_exception_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)  # type: ignore[arg-type]
     app.add_exception_handler(Exception, global_exception_handler)

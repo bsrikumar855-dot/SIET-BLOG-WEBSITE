@@ -1,7 +1,10 @@
+from typing import Any
+
 import httpx
-from typing import Dict, Any, Optional, List
+
 from app.core.config import settings
 from app.core.logging import logger
+
 
 class MeilisearchClient:
     def __init__(self):
@@ -19,12 +22,12 @@ class MeilisearchClient:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.get(f"{self.url}/health", headers=self.headers)
                 response.raise_for_status()
-                return response.json().get("status") == "available"
+                return bool(response.json().get("status") == "available")
         except Exception as e:
             logger.error(f"Search engine ping failed: {e}")
             return False
 
-    async def index_document(self, index_name: str, document: Dict[str, Any]) -> bool:
+    async def index_document(self, index_name: str, document: dict[str, Any]) -> bool:
         """Index a single document."""
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -53,10 +56,10 @@ class MeilisearchClient:
             logger.error(f"Failed to delete document {document_id} from {index_name}: {e}")
             return False
 
-    async def search(self, index_name: str, query: str, filters: Optional[str] = None, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
+    async def search(self, index_name: str, query: str, filters: str | None = None, limit: int = 20, offset: int = 0) -> dict[str, Any]:
         """Search documents in an index."""
         try:
-            payload: Dict[str, Any] = {
+            payload: dict[str, Any] = {
                 "q": query,
                 "limit": limit,
                 "offset": offset
@@ -71,7 +74,7 @@ class MeilisearchClient:
                     headers=self.headers
                 )
                 response.raise_for_status()
-                return response.json()
+                return dict(response.json())
         except Exception as e:
             logger.error(f"Search failed for query '{query}' in {index_name}: {e}")
             return {"hits": [], "query": query, "error": str(e)}

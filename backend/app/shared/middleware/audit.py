@@ -1,6 +1,9 @@
 import time
-from starlette.types import ASGIApp, Scope, Receive, Send
+
+from starlette.types import ASGIApp, Receive, Scope, Send
+
 from app.core.logging import logger
+
 
 class AuditMiddleware:
     def __init__(self, app: ASGIApp):

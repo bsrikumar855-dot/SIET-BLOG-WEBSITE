@@ -1,13 +1,18 @@
-from typing import Optional, Tuple, List
-from datetime import datetime, timezone
-from app.modules.articles.models import Article
-from app.modules.articles.schemas import ArticleCreate, ArticleUpdate, ArticlePublish
-from app.modules.articles.repository import ArticleRepository
+from datetime import UTC, datetime
+
 from app.modules.articles.exceptions import ArticleNotFoundException
-from app.shared.utils.slugs import generate_slug, ensure_unique_slug
-from app.shared.utils.publish import validate_publish_state, validate_status_transition, calculate_reading_time
+from app.modules.articles.models import Article
+from app.modules.articles.repository import ArticleRepository
+from app.modules.articles.schemas import ArticleCreate, ArticlePublish, ArticleUpdate
+from app.shared.pagination.cursor import CursorPageInfo, decode_cursor, encode_cursor
 from app.shared.types.content import ContentStatus
-from app.shared.pagination.cursor import CursorPageInfo, encode_cursor, decode_cursor
+from app.shared.utils.publish import (
+    calculate_reading_time,
+    validate_publish_state,
+    validate_status_transition,
+)
+from app.shared.utils.slugs import ensure_unique_slug, generate_slug
+
 
 class ArticleService:
     def __init__(self, repository: ArticleRepository):
@@ -28,9 +33,9 @@ class ArticleService:
     async def list_articles(
         self, 
         limit: int = 20, 
-        cursor: Optional[str] = None, 
-        status: Optional[ContentStatus] = None
-    ) -> Tuple[List[Article], CursorPageInfo]:
+        cursor: str | None = None, 
+        status: ContentStatus | None = None
+    ) -> tuple[list[Article], CursorPageInfo]:
         
         cursor_data = decode_cursor(cursor)
         cursor_id = cursor_data.get("id") if cursor_data else None
@@ -66,7 +71,6 @@ class ArticleService:
             status=ContentStatus.DRAFT
         )
         article = await self.repository.create(article)
-        await self.repository.db.commit()
         await self.repository.db.refresh(article)
         return article
 
@@ -87,7 +91,7 @@ class ArticleService:
             setattr(article, key, value)
             
         article = await self.repository.update(article)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(article)
         return article
 
@@ -103,19 +107,18 @@ class ArticleService:
         }
         validate_publish_state(publish_in.status, required_fields)
         
-        update_dict = {"status": publish_in.status}
+        update_dict: dict[str, object] = {"status": publish_in.status}
         if publish_in.status == ContentStatus.PUBLISHED and not article.published_at:
-            update_dict["published_at"] = datetime.now(timezone.utc)
+            update_dict["published_at"] = datetime.now(UTC)
             
         for key, value in update_dict.items():
             setattr(article, key, value)
             
         article = await self.repository.update(article)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(article)
         return article
 
     async def delete_article(self, article_id: int) -> None:
         article = await self.get_article(article_id)
         await self.repository.delete(article)
-        await self.repository.db.commit()

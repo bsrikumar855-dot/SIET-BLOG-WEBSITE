@@ -1,6 +1,5 @@
-from typing import Optional
 
-from fastapi import APIRouter, Depends, Request, Response, status, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -77,7 +76,7 @@ async def login(
 async def refresh(
     request: Request,
     response: Response,
-    refresh_token: Optional[str] = None,
+    refresh_token: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     token = refresh_token or request.cookies.get(settings.REFRESH_COOKIE_NAME)

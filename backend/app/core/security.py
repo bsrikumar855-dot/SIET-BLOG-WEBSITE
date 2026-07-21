@@ -1,9 +1,11 @@
+from datetime import UTC, datetime, timedelta
+
 import bcrypt
-from datetime import datetime, timedelta, timezone
-from typing import Optional
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 from pydantic import BaseModel
+
 from app.core.config import settings
+
 
 class TokenPayload(BaseModel):
     sub: str  # User ID
@@ -27,9 +29,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_token(data: dict, expires_delta: timedelta, token_type: str) -> str:
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + expires_delta
+    expire = datetime.now(UTC) + expires_delta
     to_encode.update({"exp": int(expire.timestamp()), "type": token_type})
-    return jwt.encode(to_encode, settings.JWT_SECRET.get_secret_value(), algorithm=settings.JWT_ALGORITHM)
+    return str(jwt.encode(to_encode, settings.JWT_SECRET.get_secret_value(), algorithm=settings.JWT_ALGORITHM))
 
 def create_access_token(user_id: str, role: str) -> str:
     return create_token(
@@ -45,7 +47,7 @@ def create_refresh_token(user_id: str, role: str) -> str:
         token_type="refresh"
     )
 
-def decode_token(token: str) -> Optional[TokenPayload]:
+def decode_token(token: str) -> TokenPayload | None:
     try:
         payload = jwt.decode(token, settings.JWT_SECRET.get_secret_value(), algorithms=[settings.JWT_ALGORITHM])
         # jwt.decode exp can return epoch int, so Pydantic parses standard timestamp to datetime

@@ -1,7 +1,10 @@
-import httpx
 import xml.etree.ElementTree as ET
-from typing import List, Dict, Any
+from typing import Any
+
+import httpx
+
 from app.core.logging import logger
+
 
 class RSSClient:
     """Client for fetching and parsing RSS feeds without business logic."""
@@ -9,7 +12,7 @@ class RSSClient:
     def __init__(self):
         self.timeout = httpx.Timeout(15.0)
 
-    async def fetch_feed(self, url: str) -> List[Dict[str, Any]]:
+    async def fetch_feed(self, url: str) -> list[dict[str, Any]]:
         """Fetches an RSS feed and returns parsed items as dictionaries."""
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -27,7 +30,7 @@ class RSSClient:
             logger.error(f"Unexpected error fetching feed {url}: {e}")
             return []
 
-    def _parse_xml(self, xml_content: str) -> List[Dict[str, Any]]:
+    def _parse_xml(self, xml_content: str) -> list[dict[str, Any]]:
         """Parses generic RSS/Atom XML content into a list of dicts."""
         items = []
         root = ET.fromstring(xml_content)

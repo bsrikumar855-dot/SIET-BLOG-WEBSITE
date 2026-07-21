@@ -1,15 +1,23 @@
-from typing import Any, List, Optional
-from app.shared.responses.schemas import SuccessResponse, ErrorResponse, ErrorDetail, PaginatedResponse, CursorPageInfo
+from typing import Any
 
-def success(data: Any = None, message: Optional[str] = None) -> SuccessResponse:
+from app.shared.responses.schemas import (
+    CursorPageInfo,
+    ErrorDetail,
+    ErrorResponse,
+    PaginatedResponse,
+    SuccessResponse,
+)
+
+
+def success(data: Any = None, message: str | None = None) -> SuccessResponse:
     """Helper to generate standard success response envelope."""
     return SuccessResponse(success=True, data=data, message=message)
 
-def created(data: Any = None, message: Optional[str] = None) -> SuccessResponse:
+def created(data: Any = None, message: str | None = None) -> SuccessResponse:
     """Helper to generate standard created response envelope."""
     return SuccessResponse(success=True, data=data, message=message)
 
-def paginated(data: List[Any], next_cursor: Optional[str], has_next: bool, message: Optional[str] = None) -> PaginatedResponse:
+def paginated(data: list[Any], next_cursor: str | None, has_next: bool, message: str | None = None) -> PaginatedResponse:
     """Helper to generate standard paginated response envelope."""
     return PaginatedResponse(
         success=True,

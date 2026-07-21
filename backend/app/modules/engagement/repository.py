@@ -1,16 +1,17 @@
-from typing import Optional
-from sqlalchemy import select, func, and_, delete
+
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.modules.engagement.models import Like, Bookmark
+
+from app.modules.engagement.models import Bookmark, Like
+from app.shared.repository.base import BaseRepository
 from app.shared.types.content import ContentKind
 
-from app.shared.repository.base import BaseRepository
 
 class EngagementRepository(BaseRepository[Like]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, Like)
 
-    async def get_like(self, user_id: int, content_id: int, content_kind: ContentKind) -> Optional[Like]:
+    async def get_like(self, user_id: int, content_id: int, content_kind: ContentKind) -> Like | None:
         query = select(Like).where(
             and_(
                 Like.user_id == user_id,
@@ -21,7 +22,7 @@ class EngagementRepository(BaseRepository[Like]):
         result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def get_bookmark(self, user_id: int, content_id: int, content_kind: ContentKind) -> Optional[Bookmark]:
+    async def get_bookmark(self, user_id: int, content_id: int, content_kind: ContentKind) -> Bookmark | None:
         query = select(Bookmark).where(
             and_(
                 Bookmark.user_id == user_id,

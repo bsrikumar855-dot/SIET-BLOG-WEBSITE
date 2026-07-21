@@ -1,7 +1,7 @@
-from sqlalchemy import func, select
-from sqlalchemy.orm import selectinload
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, Query, Request
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.modules.contract_helpers import (
@@ -12,7 +12,14 @@ from app.modules.contract_helpers import (
     search_filter,
     serialize_magazine,
 )
-from app.modules.engagement.router import bookmark_contract, bookmark_status_contract, like_contract, like_status_contract, unlike_contract, unbookmark_contract
+from app.modules.engagement.router import (
+    bookmark_contract,
+    bookmark_status_contract,
+    like_contract,
+    like_status_contract,
+    unbookmark_contract,
+    unlike_contract,
+)
 from app.modules.magazine.models import Magazine
 from app.shared.exceptions.custom import NotFoundException
 from app.shared.types.content import ContentKind, ContentStatus, MagazineType

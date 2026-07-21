@@ -1,13 +1,14 @@
-from typing import Optional, Tuple, List
-from datetime import datetime, timezone
-from app.modules.news.models import News
-from app.modules.news.schemas import NewsCreate, NewsUpdate, NewsPublish
-from app.modules.news.repository import NewsRepository
+from datetime import UTC, datetime
+
 from app.modules.news.exceptions import NewsNotFoundException
-from app.shared.utils.slugs import generate_slug, ensure_unique_slug
-from app.shared.utils.publish import validate_publish_state, validate_status_transition
+from app.modules.news.models import News
+from app.modules.news.repository import NewsRepository
+from app.modules.news.schemas import NewsCreate, NewsPublish, NewsUpdate
+from app.shared.pagination.cursor import CursorPageInfo, decode_cursor, encode_cursor
 from app.shared.types.content import ContentStatus
-from app.shared.pagination.cursor import CursorPageInfo, encode_cursor, decode_cursor
+from app.shared.utils.publish import validate_publish_state, validate_status_transition
+from app.shared.utils.slugs import ensure_unique_slug, generate_slug
+
 
 class NewsService:
     def __init__(self, repository: NewsRepository):
@@ -28,9 +29,9 @@ class NewsService:
     async def list_news(
         self, 
         limit: int = 20, 
-        cursor: Optional[str] = None, 
-        status: Optional[ContentStatus] = None
-    ) -> Tuple[List[News], CursorPageInfo]:
+        cursor: str | None = None, 
+        status: ContentStatus | None = None
+    ) -> tuple[list[News], CursorPageInfo]:
         
         cursor_data = decode_cursor(cursor)
         cursor_id = cursor_data.get("id") if cursor_data else None
@@ -62,7 +63,6 @@ class NewsService:
             status=ContentStatus.DRAFT
         )
         news = await self.repository.create(news)
-        await self.repository.db.commit()
         await self.repository.db.refresh(news)
         return news
 
@@ -80,7 +80,7 @@ class NewsService:
             setattr(news, key, value)
         
         news = await self.repository.update(news)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(news)
         return news
 
@@ -95,19 +95,18 @@ class NewsService:
         }
         validate_publish_state(publish_in.status, required_fields)
         
-        update_dict = {"status": publish_in.status}
+        update_dict: dict[str, object] = {"status": publish_in.status}
         if publish_in.status == ContentStatus.PUBLISHED and not news.published_at:
-            update_dict["published_at"] = datetime.now(timezone.utc)
+            update_dict["published_at"] = datetime.now(UTC)
             
         for key, value in update_dict.items():
             setattr(news, key, value)
             
         news = await self.repository.update(news)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(news)
         return news
 
     async def delete_news(self, news_id: int) -> None:
         news = await self.get_news(news_id)
         await self.repository.delete(news)
-        await self.repository.db.commit()

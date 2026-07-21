@@ -1,18 +1,22 @@
-from typing import Optional
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app.modules.analytics.repository import AnalyticsRepository
-from app.modules.analytics.schemas import RecordViewRequest, DashboardMetricsResponse, TrendingItemResponse
+from app.modules.analytics.schemas import (
+    DashboardMetricsResponse,
+    RecordViewRequest,
+    TrendingItemResponse,
+)
+
 
 class AnalyticsService:
     def __init__(self, repository: AnalyticsRepository):
         self.repository = repository
 
-    async def record_view(self, request: RecordViewRequest, user_id: Optional[int] = None) -> None:
+    async def record_view(self, request: RecordViewRequest, user_id: int | None = None) -> None:
         await self.repository.record_view(request.content_id, request.content_kind, user_id)
-        await self.repository.db.commit()
 
     async def get_dashboard_metrics(self) -> DashboardMetricsResponse:
-        current_date = datetime.now(timezone.utc).date()
+        current_date = datetime.now(UTC).date()
         
         # In a real system, background tasks would populate the trending metrics
         # For immediate results if empty, we might calculate on the fly, but this violates 
@@ -42,6 +46,5 @@ class AnalyticsService:
 
     async def trigger_trending_calculation(self) -> None:
         """Triggered by background worker or internal API to calculate trending items."""
-        current_date = datetime.now(timezone.utc).date()
+        current_date = datetime.now(UTC).date()
         await self.repository.calculate_and_save_trending(current_date)
-        await self.repository.db.commit()

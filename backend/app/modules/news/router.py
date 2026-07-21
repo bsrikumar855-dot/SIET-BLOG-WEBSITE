@@ -1,6 +1,6 @@
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, Query, Request
 
 from app.core.database import get_db
 from app.modules.contract_helpers import (
@@ -13,10 +13,17 @@ from app.modules.contract_helpers import (
     serialize_news,
 )
 from app.modules.domains.models import Domain
+from app.modules.engagement.router import (
+    bookmark_contract,
+    bookmark_status_contract,
+    like_contract,
+    like_status_contract,
+    unbookmark_contract,
+    unlike_contract,
+)
 from app.modules.news.models import News
 from app.shared.exceptions.custom import NotFoundException
 from app.shared.types.content import ContentKind, ContentStatus
-from app.modules.engagement.router import bookmark_contract, bookmark_status_contract, like_contract, like_status_contract, unlike_contract, unbookmark_contract
 
 router = APIRouter(prefix="/news", tags=["News"])
 

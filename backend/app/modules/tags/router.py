@@ -1,6 +1,6 @@
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends
 
 from app.core.database import get_db
 from app.modules.contract_helpers import serialize_tag

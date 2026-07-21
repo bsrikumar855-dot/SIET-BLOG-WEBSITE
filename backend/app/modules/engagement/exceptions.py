@@ -1,5 +1,6 @@
 from app.shared.exceptions.custom import APIException, ForbiddenException
 
+
 class UnverifiedEmailException(ForbiddenException):
     def __init__(self, message: str = "Email verification required to perform this action"):
         super().__init__(message=message)

@@ -1,30 +1,31 @@
-from pydantic import BaseModel, Field, EmailStr
-from typing import Optional, List, Dict, Any
 from datetime import datetime
-from app.shared.types.content import ContentStatus
-from app.modules.news.schemas import NewsCreate, NewsUpdate
+from typing import Any
+
+from pydantic import BaseModel, EmailStr, Field
+
 from app.modules.articles.schemas import ArticleCreate, ArticleUpdate
 from app.modules.magazine.schemas import MagazineCreate, MagazineUpdate
-from app.modules.domains.schemas import DomainCreate, DomainUpdate
-from app.modules.tags.schemas import TagCreate, TagUpdate
+from app.modules.news.schemas import NewsCreate, NewsUpdate
+from app.shared.types.content import ContentStatus
+
 
 class AdminNewsCreate(NewsCreate):
     status: ContentStatus = ContentStatus.DRAFT
 
 class AdminNewsUpdate(NewsUpdate):
-    status: Optional[ContentStatus] = None
+    status: ContentStatus | None = None
 
 class AdminArticleCreate(ArticleCreate):
     status: ContentStatus = ContentStatus.DRAFT
 
 class AdminArticleUpdate(ArticleUpdate):
-    status: Optional[ContentStatus] = None
+    status: ContentStatus | None = None
 
 class AdminMagazineCreate(MagazineCreate):
     status: ContentStatus = ContentStatus.DRAFT
 
 class AdminMagazineUpdate(MagazineUpdate):
-    status: Optional[ContentStatus] = None
+    status: ContentStatus | None = None
 
 class AdminUserCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
@@ -34,10 +35,10 @@ class AdminUserCreate(BaseModel):
     email_verified: bool = True
 
 class AdminUserUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=2, max_length=100)
-    email: Optional[EmailStr] = None
-    role: Optional[str] = None
-    email_verified: Optional[bool] = None
+    name: str | None = Field(None, min_length=2, max_length=100)
+    email: EmailStr | None = None
+    role: str | None = None
+    email_verified: bool | None = None
 
 class DashboardTotals(BaseModel):
     users: int
@@ -53,9 +54,9 @@ class DashboardActivity(BaseModel):
 
 class DashboardResponse(BaseModel):
     totals: DashboardTotals
-    recentActivity: List[DashboardActivity]
+    recentActivity: list[DashboardActivity]
 
 class AnalyticsResponse(BaseModel):
-    views: List[Dict[str, Any]]
-    topContent: List[Dict[str, Any]]
-    likesOverTime: List[Dict[str, Any]]
+    views: list[dict[str, Any]]
+    topContent: list[dict[str, Any]]
+    likesOverTime: list[dict[str, Any]]

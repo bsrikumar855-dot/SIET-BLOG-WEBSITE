@@ -1,12 +1,16 @@
-from datetime import datetime, timezone
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime
+from typing import Any
+
 from sqlalchemy import DateTime
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.pool import NullPool
-from app.core.config import settings, Environment
+
+from app.core.config import Environment, settings
 
 # Environment-aware engine configuration
+engine_kwargs: dict[str, Any]
 if settings.ENV == Environment.testing:
     engine_kwargs = {"poolclass": NullPool}
 else:
@@ -37,13 +41,13 @@ class BaseModelMixin:
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False
     )
     deleted_at: Mapped[datetime | None] = mapped_column(

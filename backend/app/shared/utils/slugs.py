@@ -1,8 +1,9 @@
 import re
 import unicodedata
-from typing import Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 def generate_slug(text: str) -> str:
     """Generates a URL-friendly slug from a string."""
@@ -10,7 +11,7 @@ def generate_slug(text: str) -> str:
     text = re.sub(r"[^\w\s-]", "", text.lower())
     return re.sub(r"[-\s]+", "-", text).strip("-")
 
-async def ensure_unique_slug(db: AsyncSession, model, slug: str, exclude_id: Optional[int] = None) -> str:
+async def ensure_unique_slug(db: AsyncSession, model, slug: str, exclude_id: int | None = None) -> str:
     """Ensures a slug is unique in the given model."""
     original_slug = slug
     counter = 1

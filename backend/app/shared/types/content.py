@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class ContentKind(str, Enum):
     NEWS = "news"
     ARTICLE = "article"

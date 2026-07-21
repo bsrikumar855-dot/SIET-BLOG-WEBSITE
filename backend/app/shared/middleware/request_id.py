@@ -1,6 +1,9 @@
 import uuid
-from starlette.types import ASGIApp, Scope, Receive, Send
+
+from starlette.types import ASGIApp, Receive, Scope, Send
+
 from app.core.logging import request_id_var
+
 
 class RequestIDMiddleware:
     def __init__(self, app: ASGIApp):

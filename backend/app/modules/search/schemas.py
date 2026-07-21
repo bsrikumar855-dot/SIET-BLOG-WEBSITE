@@ -1,12 +1,13 @@
-from typing import List, Optional
+
 from pydantic import BaseModel
+
 
 class SearchQuery(BaseModel):
     query: str
     limit: int = 20
     offset: int = 0
-    domain_id: Optional[int] = None
-    tag_id: Optional[int] = None
+    domain_id: int | None = None
+    tag_id: int | None = None
 
 class SearchResultHit(BaseModel):
     id: str
@@ -18,6 +19,6 @@ class SearchResultHit(BaseModel):
 
 class SearchResponse(BaseModel):
     query: str
-    hits: List[SearchResultHit]
+    hits: list[SearchResultHit]
     total_hits: int
     processing_time_ms: int

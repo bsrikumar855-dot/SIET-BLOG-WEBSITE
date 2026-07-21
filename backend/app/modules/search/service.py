@@ -1,6 +1,6 @@
-from typing import Any
 from app.infrastructure.search.client import MeilisearchClient
 from app.modules.search.schemas import SearchQuery, SearchResponse, SearchResultHit
+
 
 class SearchService:
     def __init__(self, search_client: MeilisearchClient):

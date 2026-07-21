@@ -1,12 +1,29 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from fastapi import BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    hash_password,
+    verify_password,
+)
+from app.infrastructure.email.provider import (
+    EmailProvider,
+    generate_secure_token,
+    hash_token,
+)
 from app.modules.auth.models import User
 from app.modules.auth.repository import UserRepository
-from app.modules.auth.schemas import RegisterRequest, LoginRequest, ResetPasswordRequest
-from app.shared.exceptions.custom import ConflictException, UnauthorizedException, NotFoundException
-from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
-from app.infrastructure.email.provider import EmailProvider, generate_secure_token, hash_token
+from app.modules.auth.schemas import LoginRequest, RegisterRequest, ResetPasswordRequest
+from app.shared.exceptions.custom import (
+    ConflictException,
+    NotFoundException,
+    UnauthorizedException,
+)
+
 
 class AuthService:
     def __init__(self, db: AsyncSession):
@@ -39,8 +56,8 @@ class AuthService:
         if not user or not verify_password(data.password, user.password_hash):
             raise UnauthorizedException("Invalid email or password.")
         
-        access_token = create_access_token(user.id, user.role)
-        refresh_token = create_refresh_token(user.id, user.role)
+        access_token = create_access_token(str(user.id), user.role)
+        refresh_token = create_refresh_token(str(user.id), user.role)
         
         return access_token, refresh_token, user
 
@@ -53,7 +70,7 @@ class AuthService:
         if not user:
             raise UnauthorizedException("User not found.")
         
-        return create_access_token(user.id, user.role)
+        return create_access_token(str(user.id), user.role)
 
     async def verify_email(self, token: str) -> None:
         hashed = hash_token(token)
@@ -62,7 +79,7 @@ class AuthService:
             raise UnauthorizedException("Invalid verification token.")
         
         # Check expiry
-        if user.verification_token_expiry.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+        if user.verification_token_expiry.replace(tzinfo=UTC) < datetime.now(UTC):
             raise UnauthorizedException("Verification token has expired.")
         
         user.email_verified = True
@@ -101,7 +118,7 @@ class AuthService:
         if not user or not user.reset_token_expiry:
             raise UnauthorizedException("Invalid reset token.")
         
-        if user.reset_token_expiry.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+        if user.reset_token_expiry.replace(tzinfo=UTC) < datetime.now(UTC):
             raise UnauthorizedException("Reset token has expired.")
         
         user.password_hash = hash_password(data.new_password)

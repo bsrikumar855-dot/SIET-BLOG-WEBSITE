@@ -1,13 +1,18 @@
-from typing import Optional, Tuple, List
-from datetime import datetime, timezone
-from app.modules.magazine.models import Magazine, MagazineAchievement, MagazineProjectLink
-from app.modules.magazine.schemas import MagazineCreate, MagazineUpdate, MagazinePublish
-from app.modules.magazine.repository import MagazineRepository
+from datetime import UTC, datetime
+
 from app.modules.magazine.exceptions import MagazineNotFoundException
-from app.shared.utils.slugs import generate_slug, ensure_unique_slug
-from app.shared.utils.publish import validate_publish_state, validate_status_transition
+from app.modules.magazine.models import (
+    Magazine,
+    MagazineAchievement,
+    MagazineProjectLink,
+)
+from app.modules.magazine.repository import MagazineRepository
+from app.modules.magazine.schemas import MagazineCreate, MagazinePublish, MagazineUpdate
+from app.shared.pagination.cursor import CursorPageInfo, decode_cursor, encode_cursor
 from app.shared.types.content import ContentStatus
-from app.shared.pagination.cursor import CursorPageInfo, encode_cursor, decode_cursor
+from app.shared.utils.publish import validate_publish_state, validate_status_transition
+from app.shared.utils.slugs import ensure_unique_slug, generate_slug
+
 
 class MagazineService:
     def __init__(self, repository: MagazineRepository):
@@ -28,10 +33,10 @@ class MagazineService:
     async def list_magazines(
         self, 
         limit: int = 20, 
-        cursor: Optional[str] = None, 
-        status: Optional[ContentStatus] = None,
-        year: Optional[int] = None
-    ) -> Tuple[List[Magazine], CursorPageInfo]:
+        cursor: str | None = None, 
+        status: ContentStatus | None = None,
+        year: int | None = None
+    ) -> tuple[list[Magazine], CursorPageInfo]:
         
         cursor_data = decode_cursor(cursor)
         cursor_id = cursor_data.get("id") if cursor_data else None
@@ -77,7 +82,6 @@ class MagazineService:
             ]
             
         magazine = await self.repository.create(magazine)
-        await self.repository.db.commit()
         await self.repository.db.refresh(magazine)
         return magazine
 
@@ -95,7 +99,7 @@ class MagazineService:
             setattr(magazine, key, value)
             
         magazine = await self.repository.update(magazine)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(magazine)
         return magazine
 
@@ -112,19 +116,18 @@ class MagazineService:
         }
         validate_publish_state(publish_in.status, required_fields)
         
-        update_dict = {"status": publish_in.status}
+        update_dict: dict[str, object] = {"status": publish_in.status}
         if publish_in.status == ContentStatus.PUBLISHED and not magazine.published_at:
-            update_dict["published_at"] = datetime.now(timezone.utc)
+            update_dict["published_at"] = datetime.now(UTC)
             
         for key, value in update_dict.items():
             setattr(magazine, key, value)
             
         magazine = await self.repository.update(magazine)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(magazine)
         return magazine
 
     async def delete_magazine(self, magazine_id: int) -> None:
         magazine = await self.get_magazine(magazine_id)
         await self.repository.delete(magazine)
-        await self.repository.db.commit()

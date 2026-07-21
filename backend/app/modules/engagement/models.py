@@ -1,7 +1,9 @@
-from sqlalchemy import Integer, ForeignKey, Enum, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Enum, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.core.database import Base, BaseModelMixin
 from app.shared.types.content import ContentKind
+
 
 class Like(Base, BaseModelMixin):
     __tablename__ = "likes"

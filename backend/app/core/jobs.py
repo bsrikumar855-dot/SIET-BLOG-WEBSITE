@@ -1,7 +1,7 @@
 ﻿import asyncio
+
 from app.core.logging import logger
-from app.infrastructure.search.client import MeilisearchClient
-from app.infrastructure.storage.client import R2StorageClient
+
 
 class BackgroundJobRunner:
     @staticmethod
