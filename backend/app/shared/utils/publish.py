@@ -1,7 +1,9 @@
 import re
-from typing import Optional, List
+
 from fastapi import HTTPException, status
+
 from app.shared.types.content import ContentStatus
+
 
 def calculate_reading_time(text: str, wpm: int = 200) -> int:
     """Calculates reading time in minutes based on words per minute (WPM)."""

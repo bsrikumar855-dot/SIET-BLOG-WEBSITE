@@ -1,9 +1,10 @@
-from typing import List
+
+from app.modules.tags.exceptions import TagNotFoundException
 from app.modules.tags.models import Tag
-from app.modules.tags.schemas import TagCreate, TagUpdate
 from app.modules.tags.repository import TagRepository
-from app.modules.tags.exceptions import TagNotFoundException, TagAlreadyExistsException
-from app.shared.utils.slugs import generate_slug, ensure_unique_slug
+from app.modules.tags.schemas import TagCreate, TagUpdate
+from app.shared.utils.slugs import ensure_unique_slug, generate_slug
+
 
 class TagService:
     def __init__(self, repository: TagRepository):
@@ -21,7 +22,7 @@ class TagService:
             raise TagNotFoundException()
         return tag
 
-    async def list_tags(self, skip: int = 0, limit: int = 100) -> List[Tag]:
+    async def list_tags(self, skip: int = 0, limit: int = 100) -> list[Tag]:
         return await self.repository.get_all(skip, limit)
 
     async def create_tag(self, tag_in: TagCreate) -> Tag:
@@ -33,7 +34,6 @@ class TagService:
             slug=slug
         )
         tag = await self.repository.create(tag)
-        await self.repository.db.commit()
         await self.repository.db.refresh(tag)
         return tag
 
@@ -50,11 +50,10 @@ class TagService:
             setattr(tag, key, value)
             
         tag = await self.repository.update(tag)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(tag)
         return tag
 
     async def delete_tag(self, tag_id: int) -> None:
         tag = await self.get_tag(tag_id)
         await self.repository.delete(tag)
-        await self.repository.db.commit()

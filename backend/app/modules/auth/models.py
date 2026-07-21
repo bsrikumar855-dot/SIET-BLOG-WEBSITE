@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
-from typing import Optional
-from sqlalchemy import String, Boolean, DateTime
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from app.core.database import Base, BaseModelMixin
+
 
 class User(Base, BaseModelMixin):
     __tablename__ = "users"
@@ -13,8 +15,8 @@ class User(Base, BaseModelMixin):
     role: Mapped[str] = mapped_column(String(20), default="user", nullable=False)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     
-    verification_token_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    verification_token_expiry: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    verification_token_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    verification_token_expiry: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     
-    reset_token_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    reset_token_expiry: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    reset_token_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    reset_token_expiry: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

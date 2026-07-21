@@ -1,6 +1,12 @@
 from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, Field, field_validator
-from app.shared.validators.common import validate_email_format, validate_password_strength
+
+from app.shared.validators.common import (
+    validate_email_format,
+    validate_password_strength,
+)
+
 
 class RegisterRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
@@ -20,6 +26,7 @@ class RegisterRequest(BaseModel):
         return v
 
 from pydantic import ConfigDict
+
 
 class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

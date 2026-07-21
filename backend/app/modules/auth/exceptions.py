@@ -1,5 +1,6 @@
 from app.shared.exceptions.custom import APIException
 
+
 class InvalidCredentialsException(APIException):
     status_code = 401
     code = "INVALID_CREDENTIALS"

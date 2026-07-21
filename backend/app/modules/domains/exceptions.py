@@ -1,4 +1,5 @@
-from app.shared.exceptions.custom import NotFoundException, ConflictException
+from app.shared.exceptions.custom import ConflictException, NotFoundException
+
 
 class DomainNotFoundException(NotFoundException):
     def __init__(self, message: str = "Domain not found"):

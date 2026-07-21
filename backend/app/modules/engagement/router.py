@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any
 
 from fastapi import APIRouter, Depends, Request
@@ -186,7 +187,9 @@ def _content_by_type(content_type: str) -> tuple[Any, ContentKind]:
     return entry
 
 
-async def _serialize_liked_or_bookmarked(db: AsyncSession, user_id: int, rows: list[Like] | list[Bookmark]) -> dict[str, Any]:
+async def _serialize_liked_or_bookmarked(
+    db: AsyncSession, user_id: int, rows: Sequence[Like] | Sequence[Bookmark]
+) -> dict[str, Any]:
     domains = await get_domain_map(db)
     users = await get_user_map(db)
     media = await get_media_map(db)
@@ -195,13 +198,13 @@ async def _serialize_liked_or_bookmarked(db: AsyncSession, user_id: int, rows: l
     for row in rows:
         by_kind[row.content_kind].append(row.content_id)
 
-    news_rows = []
+    news_rows: Sequence[News] = []
     if by_kind[ContentKind.NEWS]:
         news_rows = (await db.execute(select(News).where(News.id.in_(by_kind[ContentKind.NEWS])))).scalars().all()
-    article_rows = []
+    article_rows: Sequence[Article] = []
     if by_kind[ContentKind.ARTICLE]:
         article_rows = (await db.execute(select(Article).where(Article.id.in_(by_kind[ContentKind.ARTICLE])))).scalars().all()
-    magazine_rows = []
+    magazine_rows: Sequence[Magazine] = []
     if by_kind[ContentKind.MAGAZINE]:
         magazine_rows = (await db.execute(select(Magazine).where(Magazine.id.in_(by_kind[ContentKind.MAGAZINE])))).scalars().all()
 

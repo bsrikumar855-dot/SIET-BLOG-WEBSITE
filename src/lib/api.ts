@@ -69,7 +69,10 @@ export const api = {
   },
   register: async (b: { name: string; email: string; password: string }) => {
     currentUserPromise = null;
-    return req<User>("/auth/register", { method: "POST", body: JSON.stringify(b) });
+    return req<{ id: string; email: string; email_verified: boolean }>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(b),
+    });
   },
 
   likeStatus: (type: "news" | "articles" | "magazine", slug: string) =>

@@ -1,18 +1,19 @@
-from typing import List, Optional
 from datetime import date
-from sqlalchemy import select, func, desc
+
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.analytics.models import PageView, TrendingMetric
-from app.modules.engagement.models import Like, Bookmark
+from app.modules.engagement.models import Bookmark, Like
+from app.shared.repository.base import BaseRepository
 from app.shared.types.content import ContentKind
 
-from app.shared.repository.base import BaseRepository
 
 class AnalyticsRepository(BaseRepository[PageView]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, PageView)
 
-    async def record_view(self, content_id: int, content_kind: ContentKind, user_id: Optional[int]) -> PageView:
+    async def record_view(self, content_id: int, content_kind: ContentKind, user_id: int | None) -> PageView:
         view = PageView(content_id=content_id, content_kind=content_kind, user_id=user_id)
         self.db.add(view)
         return view
@@ -32,7 +33,7 @@ class AnalyticsRepository(BaseRepository[PageView]):
         result = await self.db.execute(query)
         return result.scalar() or 0
 
-    async def get_trending(self, current_date: date, limit: int = 10) -> List[TrendingMetric]:
+    async def get_trending(self, current_date: date, limit: int = 10) -> list[TrendingMetric]:
         query = select(TrendingMetric).where(TrendingMetric.calculated_date == current_date)\
             .order_by(desc(TrendingMetric.score)).limit(limit)
         result = await self.db.execute(query)

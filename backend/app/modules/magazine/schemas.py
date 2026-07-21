@@ -1,11 +1,13 @@
-from typing import Optional, List
 from datetime import datetime
+
 from pydantic import BaseModel, Field
+
 from app.shared.types.content import ContentStatus, MagazineType
+
 
 class MagazineAchievementBase(BaseModel):
     title: str = Field(..., max_length=255)
-    description: Optional[str] = None
+    description: str | None = None
 
 class MagazineProjectLinkBase(BaseModel):
     title: str = Field(..., max_length=255)
@@ -13,23 +15,23 @@ class MagazineProjectLinkBase(BaseModel):
 
 class MagazineBase(BaseModel):
     title: str = Field(..., max_length=255)
-    description: Optional[str] = None
+    description: str | None = None
     magazine_type: MagazineType
     publication_year: int
-    cover_image_id: Optional[int] = None
-    pdf_file_id: Optional[int] = None
+    cover_image_id: int | None = None
+    pdf_file_id: int | None = None
 
 class MagazineCreate(MagazineBase):
-    achievements: Optional[List[MagazineAchievementBase]] = []
-    project_links: Optional[List[MagazineProjectLinkBase]] = []
+    achievements: list[MagazineAchievementBase] | None = []
+    project_links: list[MagazineProjectLinkBase] | None = []
 
 class MagazineUpdate(BaseModel):
-    title: Optional[str] = Field(None, max_length=255)
-    description: Optional[str] = None
-    magazine_type: Optional[MagazineType] = None
-    publication_year: Optional[int] = None
-    cover_image_id: Optional[int] = None
-    pdf_file_id: Optional[int] = None
+    title: str | None = Field(None, max_length=255)
+    description: str | None = None
+    magazine_type: MagazineType | None = None
+    publication_year: int | None = None
+    cover_image_id: int | None = None
+    pdf_file_id: int | None = None
 
 class MagazinePublish(BaseModel):
     status: ContentStatus
@@ -48,9 +50,9 @@ class MagazineResponse(MagazineBase):
     id: int
     slug: str
     status: ContentStatus
-    published_at: Optional[datetime] = None
-    achievements: List[MagazineAchievementResponse] = []
-    project_links: List[MagazineProjectLinkResponse] = []
+    published_at: datetime | None = None
+    achievements: list[MagazineAchievementResponse] = []
+    project_links: list[MagazineProjectLinkResponse] = []
     created_at: datetime
     updated_at: datetime
 

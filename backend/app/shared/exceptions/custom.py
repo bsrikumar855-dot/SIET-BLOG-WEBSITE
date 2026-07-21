@@ -1,12 +1,13 @@
-from typing import Any, Optional
+from typing import Any
+
 
 class APIException(Exception):
     status_code: int = 500
     code: str = "INTERNAL_SERVER_ERROR"
     message: str = "An unexpected error occurred."
-    details: Optional[Any] = None
+    details: Any | None = None
 
-    def __init__(self, message: Optional[str] = None, details: Optional[Any] = None):
+    def __init__(self, message: str | None = None, details: Any | None = None):
         if message:
             self.message = message
         self.details = details

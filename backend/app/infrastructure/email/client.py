@@ -1,6 +1,8 @@
 import resend
+
 from app.core.config import settings
 from app.core.logging import logger
+
 
 class ResendClient:
     def __init__(self):
@@ -14,7 +16,7 @@ class ResendClient:
             logger.info(f"[Email Client Disabled] Dry run email to {params.get('to')}")
             return True
         try:
-            resend.Emails.send(params)
+            resend.Emails.send(params)  # type: ignore[arg-type]  # resend's SendParams TypedDict is stricter than our plain dict
             return True
         except Exception as e:
             logger.error(f"Failed to send email via Resend: {e}")

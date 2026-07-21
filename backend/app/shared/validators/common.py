@@ -1,5 +1,6 @@
 import re
 
+
 def validate_email_format(email: str) -> str:
     """Validates if the provided string follows a standard email format."""
     pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"

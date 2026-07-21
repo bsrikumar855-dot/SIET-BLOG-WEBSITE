@@ -1,7 +1,9 @@
-from sqlalchemy import Integer, ForeignKey, Enum, Date
+from sqlalchemy import Date, Enum, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column
+
 from app.core.database import Base, BaseModelMixin
 from app.shared.types.content import ContentKind
+
 
 class PageView(Base, BaseModelMixin):
     __tablename__ = "page_views"

@@ -1,7 +1,9 @@
-from sqlalchemy import String, Integer, Enum
+from sqlalchemy import Enum, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from app.core.database import Base, BaseModelMixin
 from app.shared.types.content import MediaType
+
 
 class Media(Base, BaseModelMixin):
     __tablename__ = "media"

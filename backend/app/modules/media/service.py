@@ -1,11 +1,11 @@
 import uuid
-from typing import List, Optional
-from app.modules.media.models import Media
-from app.modules.media.schemas import MediaCreate
-from app.modules.media.repository import MediaRepository
-from app.modules.media.exceptions import MediaNotFoundException, MediaUploadException
+
 from app.infrastructure.storage.client import R2StorageClient
+from app.modules.media.exceptions import MediaNotFoundException, MediaUploadException
+from app.modules.media.models import Media
+from app.modules.media.repository import MediaRepository
 from app.shared.types.content import MediaType
+
 
 class MediaService:
     def __init__(self, repository: MediaRepository, storage_client: R2StorageClient):
@@ -18,7 +18,7 @@ class MediaService:
             raise MediaNotFoundException()
         return media
 
-    async def list_media(self, skip: int = 0, limit: int = 100) -> List[Media]:
+    async def list_media(self, skip: int = 0, limit: int = 100) -> list[Media]:
         return await self.repository.get_all(skip, limit)
 
     async def upload_media(
@@ -27,7 +27,7 @@ class MediaService:
         content_type: str, 
         size_bytes: int, 
         file_bytes: bytes,
-        uploaded_by_id: Optional[int] = None
+        uploaded_by_id: int | None = None
     ) -> Media:
         # Determine media type roughly
         media_type = MediaType.DOCUMENT
@@ -63,7 +63,6 @@ class MediaService:
             uploaded_by_id=uploaded_by_id
         )
         media = await self.repository.create(media)
-        await self.repository.db.commit()
         await self.repository.db.refresh(media)
         return media
 
@@ -76,4 +75,3 @@ class MediaService:
             pass # Graceful failure if missing remotely
             
         await self.repository.delete(media)
-        await self.repository.db.commit()

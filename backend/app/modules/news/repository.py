@@ -1,26 +1,25 @@
-from typing import Optional, List, Tuple
-from sqlalchemy import select, desc
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.news.models import News
-from app.modules.news.schemas import NewsUpdate
+from app.shared.repository.base import BaseRepository
 from app.shared.types.content import ContentStatus
 
-from app.shared.repository.base import BaseRepository
 
 class NewsRepository(BaseRepository[News]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, News)
 
-    async def get_by_slug(self, slug: str) -> Optional[News]:
+    async def get_by_slug(self, slug: str) -> News | None:
         result = await self.db.execute(select(News).where(News.slug == slug))
         return result.scalars().first()
 
     async def get_paginated(
         self, 
         limit: int = 20, 
-        cursor_id: Optional[int] = None, 
-        status: Optional[ContentStatus] = None
-    ) -> List[News]:
+        cursor_id: int | None = None, 
+        status: ContentStatus | None = None
+    ) -> list[News]:
         query = select(News)
         
         if status:

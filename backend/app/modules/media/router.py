@@ -9,7 +9,6 @@ from app.modules.media.models import Media
 from app.modules.media.repository import MediaRepository
 from app.modules.media.service import MediaService
 from app.shared.auth.dependencies import require_admin
-from app.shared.responses.helpers import success
 
 router = APIRouter(prefix="/admin/media", tags=["Media"])
 

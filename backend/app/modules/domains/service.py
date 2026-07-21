@@ -1,9 +1,12 @@
-from typing import List
+
+from app.modules.domains.exceptions import (
+    DomainNotFoundException,
+)
 from app.modules.domains.models import Domain
-from app.modules.domains.schemas import DomainCreate, DomainUpdate
 from app.modules.domains.repository import DomainRepository
-from app.modules.domains.exceptions import DomainNotFoundException, DomainAlreadyExistsException
-from app.shared.utils.slugs import generate_slug, ensure_unique_slug
+from app.modules.domains.schemas import DomainCreate, DomainUpdate
+from app.shared.utils.slugs import ensure_unique_slug, generate_slug
+
 
 class DomainService:
     def __init__(self, repository: DomainRepository):
@@ -21,7 +24,7 @@ class DomainService:
             raise DomainNotFoundException()
         return domain
 
-    async def list_domains(self, skip: int = 0, limit: int = 100) -> List[Domain]:
+    async def list_domains(self, skip: int = 0, limit: int = 100) -> list[Domain]:
         return await self.repository.get_all(skip, limit)
 
     async def create_domain(self, domain_in: DomainCreate) -> Domain:
@@ -34,7 +37,6 @@ class DomainService:
             description=domain_in.description
         )
         domain = await self.repository.create(domain)
-        await self.repository.db.commit()
         await self.repository.db.refresh(domain)
         return domain
 
@@ -51,11 +53,10 @@ class DomainService:
             setattr(domain, key, value)
             
         domain = await self.repository.update(domain)
-        await self.repository.db.commit()
+        await self.repository.db.flush()
         await self.repository.db.refresh(domain)
         return domain
 
     async def delete_domain(self, slug: str) -> None:
         domain = await self.get_domain_by_slug(slug)
         await self.repository.delete(domain)
-        await self.repository.db.commit()

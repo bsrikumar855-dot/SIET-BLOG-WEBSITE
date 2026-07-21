@@ -1,4 +1,5 @@
-from app.shared.exceptions.custom import NotFoundException, APIException
+from app.shared.exceptions.custom import APIException, NotFoundException
+
 
 class MediaNotFoundException(NotFoundException):
     def __init__(self, message: str = "Media not found"):

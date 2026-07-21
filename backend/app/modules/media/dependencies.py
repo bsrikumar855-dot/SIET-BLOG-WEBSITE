@@ -1,9 +1,11 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
+from app.infrastructure.storage.client import R2StorageClient
 from app.modules.media.repository import MediaRepository
 from app.modules.media.service import MediaService
-from app.infrastructure.storage.client import R2StorageClient
+
 
 def get_storage_client() -> R2StorageClient:
     return R2StorageClient()

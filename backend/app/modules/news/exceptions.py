@@ -1,4 +1,5 @@
-from app.shared.exceptions.custom import NotFoundException, ConflictException
+from app.shared.exceptions.custom import ConflictException, NotFoundException
+
 
 class NewsNotFoundException(NotFoundException):
     def __init__(self, message: str = "News article not found"):

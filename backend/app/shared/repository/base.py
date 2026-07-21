@@ -1,11 +1,14 @@
-from typing import Generic, Type, TypeVar, Optional, Any
+from typing import Any, Generic, TypeVar
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-T = TypeVar("T")
+from app.core.database import BaseModelMixin
+
+T = TypeVar("T", bound=BaseModelMixin)
 
 class BaseRepository(Generic[T]):
-    def __init__(self, db: AsyncSession, model: Type[T]):
+    def __init__(self, db: AsyncSession, model: type[T]):
         self.db = db
         self.model = model
 
@@ -25,7 +28,7 @@ class BaseRepository(Generic[T]):
         """Deletes an entity instance from the database. Does not commit."""
         await self.db.delete(entity)
 
-    async def get_by_id(self, entity_id: Any) -> Optional[T]:
+    async def get_by_id(self, entity_id: Any) -> T | None:
         """Fetches an entity by its primary key ID."""
         stmt = select(self.model).where(self.model.id == entity_id)
         result = await self.db.execute(stmt)

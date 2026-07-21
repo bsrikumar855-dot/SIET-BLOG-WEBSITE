@@ -1,7 +1,7 @@
-from typing import Optional, List
-from datetime import date
 from pydantic import BaseModel
+
 from app.shared.types.content import ContentKind
+
 
 class RecordViewRequest(BaseModel):
     content_id: int
@@ -16,4 +16,4 @@ class DashboardMetricsResponse(BaseModel):
     total_views: int
     total_likes: int
     total_bookmarks: int
-    top_content: List[TrendingItemResponse]
+    top_content: list[TrendingItemResponse]

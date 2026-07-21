@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from math import ceil
-from typing import Any, Sequence
+from typing import Any
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -131,7 +132,7 @@ async def serialize_news(
     domains = domains or await get_domain_map(db)
     media = media or await get_media_map(db)
     kind = ContentKind.NEWS
-    image = media.get(item.featured_image_id).public_url if item.featured_image_id in media else None
+    image = media[item.featured_image_id].public_url if item.featured_image_id is not None and item.featured_image_id in media else None
     return {
         "id": str(item.id),
         "slug": item.slug,
@@ -139,7 +140,7 @@ async def serialize_news(
         "aiSummary": item.excerpt or item.content[:220],
         "sourceUrl": "",
         "sourceName": "SIET News",
-        "domain": domain_payload(domains.get(item.domain_id)),
+        "domain": domain_payload(domains.get(item.domain_id) if item.domain_id is not None else None),
         "tags": [],
         "image": image,
         "publishedAt": (item.published_at or item.created_at).isoformat(),
@@ -162,15 +163,15 @@ async def serialize_article(
     users = users or await get_user_map(db)
     media = media or await get_media_map(db)
     kind = ContentKind.ARTICLE
-    cover = media.get(item.featured_image_id).public_url if item.featured_image_id in media else None
+    cover = media[item.featured_image_id].public_url if item.featured_image_id is not None and item.featured_image_id in media else None
     return {
         "id": str(item.id),
         "slug": item.slug,
         "title": item.title,
         "excerpt": item.excerpt or item.content[:220],
         "body": item.content,
-        "author": user_payload(users.get(item.author_id)),
-        "domain": domain_payload(domains.get(item.domain_id)),
+        "author": user_payload(users.get(item.author_id) if item.author_id is not None else None),
+        "domain": domain_payload(domains.get(item.domain_id) if item.domain_id is not None else None),
         "tags": [],
         "cover": cover,
         "publishedAt": (item.published_at or item.created_at).isoformat(),
@@ -204,7 +205,7 @@ async def serialize_magazine(
         "type": item.magazine_type.value,
         "domain": {"slug": "achievements", "name": "Achievements", "count": 0},
         "gallery": gallery,
-        "certificateUrl": media.get(item.pdf_file_id).public_url if item.pdf_file_id in media else None,
+        "certificateUrl": media[item.pdf_file_id].public_url if item.pdf_file_id is not None and item.pdf_file_id in media else None,
         "projectLinks": [
             {"label": link.title, "url": link.url}
             for link in getattr(item, "project_links", [])

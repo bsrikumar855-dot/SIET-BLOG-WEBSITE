@@ -1,7 +1,9 @@
+
 import aioboto3
-from typing import Optional
+
 from app.core.config import Environment, settings
 from app.core.logging import logger
+
 
 class R2StorageClient:
     def __init__(self):

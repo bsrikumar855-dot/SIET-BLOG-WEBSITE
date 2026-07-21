@@ -1,6 +1,8 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.lifespan import meili_client, storage_client
+
 
 class HealthService:
     @staticmethod

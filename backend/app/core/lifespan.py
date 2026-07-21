@@ -1,8 +1,10 @@
 import asyncio
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from app.core.logging import logger
+
 from app.core.jobs import BackgroundJobRunner
+from app.core.logging import logger
 from app.infrastructure.search.client import MeilisearchClient
 from app.infrastructure.storage.client import R2StorageClient
 
