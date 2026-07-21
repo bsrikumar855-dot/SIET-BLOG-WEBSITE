@@ -22,7 +22,6 @@ from app.modules.engagement.service import EngagementService
 from app.modules.magazine.models import Magazine
 from app.modules.news.models import News
 from app.shared.exceptions.custom import ForbiddenException, NotFoundException
-from app.shared.responses.helpers import success
 from app.shared.types.content import ContentKind
 
 router = APIRouter(tags=["Engagement"])
@@ -219,8 +218,7 @@ async def get_my_likes(request: Request, db: AsyncSession = Depends(get_db)):
     if not user:
         return JSONResponse(status_code=401, content={"error": "auth_required"})
     likes = (await db.execute(select(Like).where(Like.user_id == user.id))).scalars().all()
-    data = await _serialize_liked_or_bookmarked(db, user.id, likes)
-    return success(data=data)
+    return await _serialize_liked_or_bookmarked(db, user.id, likes)
 
 
 @router.get("/me/bookmarks")
@@ -229,5 +227,4 @@ async def get_my_bookmarks(request: Request, db: AsyncSession = Depends(get_db))
     if not user:
         return JSONResponse(status_code=401, content={"error": "auth_required"})
     bookmarks = (await db.execute(select(Bookmark).where(Bookmark.user_id == user.id))).scalars().all()
-    data = await _serialize_liked_or_bookmarked(db, user.id, bookmarks)
-    return success(data=data)
+    return await _serialize_liked_or_bookmarked(db, user.id, bookmarks)

@@ -12,6 +12,7 @@ from app.modules.auth.schemas import (
     ForgotPasswordRequest,
     LoginRequest,
     LoginResponse,
+    LoginUser,
     RefreshResponse,
     RegisterRequest,
     RegisterResponse,
@@ -21,7 +22,7 @@ from app.modules.auth.schemas import (
 )
 from app.modules.auth.service import AuthService
 from app.shared.exceptions.custom import UnauthorizedException
-from app.shared.responses.helpers import created, success
+from app.shared.responses.helpers import success
 from app.shared.responses.schemas import SuccessResponse
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -29,20 +30,16 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post(
     "/register",
-    response_model=SuccessResponse[RegisterResponse],
+    response_model=RegisterResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def register(data: RegisterRequest, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
     user = await service.register(data, background_tasks)
-    response_data = RegisterResponse(
-        user=UserResponse.model_validate(user),
-        message="Registration successful. Verification email sent.",
-    )
-    return created(data=response_data)
+    return RegisterResponse.model_validate(user)
 
 
-@router.post("/login", response_model=SuccessResponse[LoginResponse])
+@router.post("/login", response_model=LoginResponse)
 async def login(
     response: Response,
     data: LoginRequest,
@@ -52,7 +49,7 @@ async def login(
     access_token, refresh_token, user = await service.login(data)
     response_data = LoginResponse(
         access_token=access_token,
-        user=UserResponse.model_validate(user),
+        user=LoginUser.model_validate(user),
     )
 
     response.set_cookie(
@@ -73,7 +70,7 @@ async def login(
         samesite=settings.COOKIE_SAMESITE,
         domain=settings.COOKIE_DOMAIN,
     )
-    return success(data=response_data)
+    return response_data
 
 
 @router.post("/refresh", response_model=SuccessResponse[RefreshResponse])
@@ -144,6 +141,6 @@ async def reset_password(
     return success(data="Password has been reset successfully.")
 
 
-@router.get("/me", response_model=SuccessResponse[UserResponse])
+@router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
-    return success(data=UserResponse.model_validate(current_user))
+    return UserResponse.model_validate(current_user)

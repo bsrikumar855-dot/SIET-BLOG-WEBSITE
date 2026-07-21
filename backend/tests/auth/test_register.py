@@ -13,8 +13,7 @@ async def test_register_success(client: AsyncClient):
     }
     res = await client.post("/api/v1/auth/register", json=payload)
     assert res.status_code == 201
-    assert res.json()["success"] is True
-    assert res.json()["data"]["user"]["email"] == email
+    assert res.json()["email"] == email
 
 @pytest.mark.asyncio
 async def test_register_duplicate_email(client: AsyncClient):

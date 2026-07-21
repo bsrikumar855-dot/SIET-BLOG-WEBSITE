@@ -39,4 +39,4 @@ async def test_email_verification_flow(client: AsyncClient, db_session: AsyncSes
         "password": "Password123"
     }
     res = await client.post("/api/v1/auth/login", json=login_payload)
-    assert res.json()["data"]["user"]["email_verified"] is True
+    assert res.json()["user"]["email_verified"] is True
