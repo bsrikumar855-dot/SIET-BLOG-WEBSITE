@@ -2,9 +2,22 @@ import * as React from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { F1IntroHero } from "@/components/signature/F1IntroHero";
-import { FeatureMosaic } from "@/components/signature/FeatureMosaic";
+import { FeatureMosaic, type MosaicItem } from "@/components/signature/FeatureMosaic";
 import { ContentCard, SectionRail } from "@/components/shared";
 import type { Achievement, Article, Domain, NewsItem } from "@/lib/types";
+
+// The real /home response's `featured`/`trending` are NewsItem[], not the single
+// mosaic-tile object FeatureMosaic expects — this maps one shape to the other.
+function toMosaicItem(item: NewsItem): MosaicItem {
+  return {
+    id: item.id,
+    title: item.title,
+    image: item.image,
+    name: item.sourceName,
+    role: item.domain.name,
+    href: `/news/${item.slug}`,
+  };
+}
 
 const PIN_COLORS = [
   "#8A1E1E", // Crimson Red
@@ -234,15 +247,24 @@ export default async function HomePage() {
     console.warn("Home API offline. Displaying client-side fallback data.", error);
   }
 
-  // Bind values with fallbacks to guarantee robust rendering
-  const featured = homeData.featured || FALLBACK_MOSAIC_FEATURED;
-  const tiles = homeData.mosaicTiles || FALLBACK_MOSAIC_TILES;
-  const news = homeData.news || FALLBACK_NEWS;
+  // The real /home payload only ever has these four keys (featured, trending,
+  // latestArticles, latestAchievements) — mosaicTiles/news/domains/events/counts
+  // have no backend source and always fall back. Empty arrays are treated the
+  // same as "absent" so a freshly-seeded DB still renders the demo content
+  // instead of a blank homepage.
+  const realFeatured: NewsItem[] = homeData.featured ?? [];
+  const realTrending: NewsItem[] = homeData.trending ?? [];
+  const realArticles: Article[] = homeData.latestArticles ?? [];
+  const realAchievements: Achievement[] = homeData.latestAchievements ?? [];
+
+  const featured = realFeatured.length ? toMosaicItem(realFeatured[0]) : FALLBACK_MOSAIC_FEATURED;
+  const tiles = realFeatured.length > 1 ? realFeatured.slice(1).map(toMosaicItem) : FALLBACK_MOSAIC_TILES;
+  const news = realTrending.length ? realTrending : FALLBACK_NEWS;
   const newsCount = homeData.newsCount || 87;
-  const articles = homeData.articles || FALLBACK_ARTICLES;
+  const articles = realArticles.length ? realArticles : FALLBACK_ARTICLES;
   const articlesCount = homeData.articlesCount || 142;
   const domains = homeData.domains || FALLBACK_DOMAINS;
-  const achievements = homeData.achievements || FALLBACK_ACHIEVEMENTS;
+  const achievements = realAchievements.length ? realAchievements : FALLBACK_ACHIEVEMENTS;
   const events = homeData.events || FALLBACK_EVENTS;
 
   return (
